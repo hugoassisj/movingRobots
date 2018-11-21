@@ -1,5 +1,5 @@
 # movingRobots
-Threads example
+Threads synchronization example
 
 # Required
 1. ubuntu
@@ -7,19 +7,19 @@ Threads example
 
 ##  Install QtCreator
 Open terminal and run:
+```
+  sudo apt-get install build-essential
 
-  1. sudo apt-get install build-essential
+  sudo apt-get install qtcreator
 
-  2. sudo apt-get install qtcreator
-
-  3. sudo apt-get install qt5-default
-
+  sudo apt-get install qt5-default
+```
 ## Open QtCreator
 
   Open terminal and run:
-  
-  1. qtcreator
-  
+  ```
+    qtcreator
+  ```
   
 After that, select Open Project and then the *.SO file.
   
