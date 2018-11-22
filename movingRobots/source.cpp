@@ -71,5 +71,7 @@ Vector2D Source::produce(Robot r)
         newPos.y = r.getPosition().y + (rand() % 20/20 + 1) * 20;
     }
     Saturate(newPos);
+    newPos.sourceID = this->getId();
+    newPos.robotID = r.getID();
     return newPos;
 }

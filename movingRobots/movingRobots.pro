@@ -18,12 +18,14 @@ SOURCES += main.cpp\
         robot.cpp \
     source.cpp \
     buffer.cpp \
-    vector2d.cpp
+    vector2d.cpp \
+    process.cpp
 
 HEADERS  += mainwindow.h \
     robot.h \
     source.h \
     buffer.h \
-    vector2d.h
+    vector2d.h \
+    process.h
 
 FORMS    += mainwindow.ui

@@ -8,6 +8,8 @@ Vector2D::Vector2D(int x, int y)
 
 Vector2D::Vector2D()
 {
-    this->x = 0;
-    this->y = 0;
+    this->x = 999;
+    this->y = 999;
+    this->sourceID = 999;
+    this->robotID = 999;
 }

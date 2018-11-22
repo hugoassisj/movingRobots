@@ -14,16 +14,15 @@ class mainWindow : public QMainWindow
 
 public:
     explicit mainWindow(QWidget *parent = 0);
-    void DefineRobos(Robot &robo1, Robot &robo2, Robot &robo3);
+    void DefineRobos(Robot * robo1, Robot * robo2, Robot * robo3);
     void DefineBuffer(Buffer * buff);
     void DefineSources(Source * source1, Source * source2, Source * source3);
-    void PosicionaRobos(Robot &robo1, Robot &robo2, Robot &robo3);
-    void ShowPositions(Robot &robo1, Robot &robo2, Robot &robo3);
+    void PosicionaRobos(Robot * robo1, Robot * robo2, Robot * robo3);
+    void ShowPositions(Robot * robo1, Robot * robo2, Robot * robo3);
     int getSlider1Value();
     int getSlider2Value();
     int getSlider3Value();
     void updateProgressBar(int size, int max);
-
 
     ~mainWindow();
 
@@ -51,16 +50,16 @@ private slots:
 
 private:
     Ui::mainWindow *ui;
-    Robot r1;
-    Robot r2;
-    Robot r3;
+    Robot * r1;
+    Robot * r2;
+    Robot * r3;
     Buffer * b1;
     Source * s1;
     Source * s2;
     Source * s3;
     Vector2D pos;
 
-        Vector2D x;
+    Vector2D x;
 };
 
 #endif // MAINWINDOW_H

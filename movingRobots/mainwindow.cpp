@@ -16,6 +16,8 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
 
     x.x = 30;
     x.y = 50;
+    x.sourceID = 0;
+    x.robotID = 0;
 }
 
 void mainWindow::UIupdate()
@@ -25,7 +27,7 @@ void mainWindow::UIupdate()
    updateProgressBar(b1->getSize(),b1->getMaxSize());
 }
 
-void mainWindow::DefineRobos(Robot &robo1, Robot &robo2, Robot &robo3)
+void mainWindow::DefineRobos(Robot * robo1, Robot * robo2, Robot * robo3)
 {
     r1 = robo1;
     r2 = robo2;
@@ -43,23 +45,23 @@ void mainWindow::DefineBuffer(Buffer * buff)
     b1 = buff;
 }
 
-void mainWindow::PosicionaRobos(Robot &robo1, Robot &robo2, Robot &robo3)
+void mainWindow::PosicionaRobos(Robot * robo1, Robot * robo2, Robot * robo3)
 {
-    ui->robot1->move(robo1.getPosition().x,robo1.getPosition().y);
-    ui->robot2->move(robo2.getPosition().x,robo2.getPosition().y);
-    ui->robot3->move(robo3.getPosition().x,robo3.getPosition().y);
+    ui->robot1->move(robo1->getPosition().x,robo1->getPosition().y);
+    ui->robot2->move(robo2->getPosition().x,robo2->getPosition().y);
+    ui->robot3->move(robo3->getPosition().x,robo3->getPosition().y);
 }
 
-void mainWindow::ShowPositions(Robot &robo1, Robot &robo2, Robot &robo3)
+void mainWindow::ShowPositions(Robot * robo1, Robot * robo2, Robot * robo3)
 {
-    ui->rob1_x->setText(QString::number(robo1.getPosition().x/20 + 1));
-    ui->rob1_y->setText(QString::number(robo1.getPosition().y/20 + 1));
+    ui->rob1_x->setText(QString::number(robo1->getPosition().x/20 + 1));
+    ui->rob1_y->setText(QString::number(robo1->getPosition().y/20 + 1));
 
-    ui->rob2_x->setText(QString::number(robo2.getPosition().x/20 + 1));
-    ui->rob2_y->setText(QString::number(robo2.getPosition().y/20 + 1));
+    ui->rob2_x->setText(QString::number(robo2->getPosition().x/20 + 1));
+    ui->rob2_y->setText(QString::number(robo2->getPosition().y/20 + 1));
 
-    ui->rob3_x->setText(QString::number(robo3.getPosition().x/20 + 1));
-    ui->rob3_y->setText(QString::number(robo3.getPosition().y/20 + 1));
+    ui->rob3_x->setText(QString::number(robo3->getPosition().x/20 + 1));
+    ui->rob3_y->setText(QString::number(robo3->getPosition().y/20 + 1));
 }
 
 
@@ -70,20 +72,20 @@ mainWindow::~mainWindow()
 
 void mainWindow::on_robot1_clicked()
 {
-   pos = s1->produce(r1);
-   r1.setPosition(pos);
+//    pos = s1->produce(*1);
+//    r1->setPosition(pos);
 }
 
 void mainWindow::on_robot2_clicked()
 {
-    pos = s2->produce(r2);
-    r2.setPosition(pos);
+//    pos = s2->produce(r2);
+//    r2->setPosition(pos);
 }
 
 void mainWindow::on_robot3_clicked()
 {
-    pos = s3->produce(r3);
-    r3.setPosition(pos);
+//    pos = s3->produce(r3);
+//    r3->setPosition(pos);
 }
 
 void mainWindow::on_horizontalSlider_valueChanged(int value)
@@ -136,6 +138,8 @@ void mainWindow::on_pushButton_2_clicked()
     b1->putPositions(x);
     x.y++;
     x.x++;
+    x.sourceID++;
+    x.robotID++;
 }
 
 void mainWindow::on_pushButton_3_clicked()
