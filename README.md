@@ -40,6 +40,6 @@ Open terminal and run:
 qtcreator 
 ```
   
-After that, select Open Project and then the *.SO file.
+After that, select Open Project and then the _*.PRO_ file.
   
 
