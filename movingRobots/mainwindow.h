@@ -43,6 +43,12 @@ private slots:
     void UIupdate();
 
 
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
+
 private:
     Ui::mainWindow *ui;
     Robot r1;
@@ -53,6 +59,8 @@ private:
     Source * s2;
     Source * s3;
     Vector2D pos;
+
+        Vector2D x;
 };
 
 #endif // MAINWINDOW_H

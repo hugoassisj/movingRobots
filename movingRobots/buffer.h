@@ -3,20 +3,23 @@
 #include "source.h"
 #include <vector>
 #include <pthread.h>
+#include <deque>
 
 
 class Buffer
 {
     pthread_mutex_t mutex1;
-    std::vector<Vector2D> buffer;
+    //std::vector<Vector2D> buffer;
     int maxSize;
     public:
+    std::deque<Vector2D> buffer;
         Buffer(int max);
         void putPositions(Vector2D pos);
-        Vector2D * getPositions();
+        Vector2D getPositions();
         void display();
         int getSize();
         int getMaxSize();
+        void init();
 };
 
 #endif // BUFFER_H

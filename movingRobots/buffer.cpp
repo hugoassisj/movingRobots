@@ -8,18 +8,42 @@ Buffer::Buffer(int max)
 {
     maxSize = max;
     mutex1 = PTHREAD_MUTEX_INITIALIZER;
-    buffer[10];
+    buffer[maxSize];
+    buffer.clear();
 }
 
 void Buffer::display()
 {
-    //mostra o vector
+    pthread_mutex_lock( &mutex1 );
+    if (!buffer.empty())
+    {
+        cout << endl;
+        cout << "Size: " << buffer.size() << endl;
+        cout << "--------------------------------------------------" << endl;
+        for (int var = 0; var < maxSize; ++var)
+        {
+            cout << var+1 << ". X: " << buffer[var].x << " Y: " << buffer[var].y << endl;
+
+        }
+    }
+    pthread_mutex_unlock( &mutex1 );
+}
+
+void Buffer::init()
+{
+    pthread_mutex_lock( &mutex1 );
+    for (int var = 0; var < maxSize; ++var)
+    {
+        buffer[var].x = 999;
+        buffer[var].y = 999;
+    }
+    pthread_mutex_unlock( &mutex1 );
 }
 
 void Buffer::putPositions(Vector2D pos)
 {
-//    cout << buffer.size() << endl;
-//    cout << maxSize << endl;
+    cout << endl;
+    cout << "Inserido: " << " X: " << pos.x << " Y: " << pos.y << endl;
     if (buffer.size() < maxSize)
     {
         pthread_mutex_lock( &mutex1 );
@@ -28,14 +52,18 @@ void Buffer::putPositions(Vector2D pos)
     }
 }
 
-Vector2D * Buffer::getPositions()
+Vector2D Buffer::getPositions()
 {
-//    pthread_mutex_lock( &mutex1 );
-//    //Aqui tem q desembaralhar geral;
-//    Vector2D element = buffer.back();
-//    buffer.pop_back();
-//    pthread_mutex_unlock( &mutex1 );
-//    return element;
+    if (buffer.size() > 0)
+    {
+        pthread_mutex_lock( &mutex1 );
+        Vector2D element = buffer.front();
+        buffer.pop_front();
+        pthread_mutex_unlock( &mutex1 );
+        cout << endl;
+        cout << "Removido: " << " X: " << element.x << " Y: " << element.y << endl;
+        return element;
+    }
 }
 
 int Buffer::getSize()

@@ -13,6 +13,9 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(UIupdate()));
     timer->start(200);
+
+    x.x = 30;
+    x.y = 50;
 }
 
 void mainWindow::UIupdate()
@@ -118,4 +121,24 @@ void mainWindow::updateProgressBar(int size, int max)
     ui->max_l->setText(QString::number(max));
     ui->itens_l->setText(QString::number(size));
     ui->progressBar->setValue((int)(100 * size/ max));  
+}
+
+void mainWindow::on_pushButton_clicked()
+{
+    b1->getPositions();
+
+}
+
+void mainWindow::on_pushButton_2_clicked()
+{
+
+
+    b1->putPositions(x);
+    x.y++;
+    x.x++;
+}
+
+void mainWindow::on_pushButton_3_clicked()
+{
+    b1->display();
 }
