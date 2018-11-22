@@ -142,11 +142,6 @@ void *Process_Thread(void* ptr)
         //Subscreve posição do Buffer - Vector2D
         //Soma, as posiçoes de cada fonte e tira a média
         //Publica para Thread de Posicionamento
-        //UIptr->DefineBuffer(b.getSize(), b.getMaxSize());
-        if(qtd == 10) qtd = 0;
-//        UIptr->updateBufferMax(BUFFER_SIZE);
-//        proce;
-
         usleep(1000000);
     }
 }
@@ -166,8 +161,6 @@ int main(int argc, char *argv[])
     w.PosicionaRobos(r1,r2,r3);
     w.ShowPositions(r1,r2,r3);
     w.show();
-
-    //UIptr->updateProgressBar(b.getSize(), b.getMaxSize());
 
     //--------------------------------------------------------------------------------------------------
     //Cria Threads Buffer

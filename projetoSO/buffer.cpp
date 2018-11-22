@@ -11,11 +11,6 @@ Buffer::Buffer(int max)
     buffer[10];
 }
 
-//Buffer::Buffer()
-//{
-//}
-
-
 void Buffer::display()
 {
     //mostra o vector
@@ -45,14 +40,18 @@ Vector2D * Buffer::getPositions()
 
 int Buffer::getSize()
 {
-    pthread_mutex_lock( &mutex3 );
-    return (int)buffer.size();
-    pthread_mutex_unlock( &mutex3 );
+	int s;
+	pthread_mutex_lock( &mutex1 );
+	s = (int) buffer.size();
+    pthread_mutex_unlock( &mutex1 );
+	return s;
 }
 
 int Buffer::getMaxSize()
 {
-    pthread_mutex_lock( &mutex2 );
-    return maxSize;
-    pthread_mutex_unlock( &mutex2 );
+	int s;
+    pthread_mutex_lock( &mutex1 );
+    s = maxSize;
+    pthread_mutex_unlock( &mutex1 );
+	return s;
 }

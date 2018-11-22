@@ -7,12 +7,11 @@
 
 class Buffer
 {
-    pthread_mutex_t mutex1, mutex2, mutex3;
+    pthread_mutex_t mutex1;
     std::vector<Vector2D> buffer;
     int maxSize;
     public:
         Buffer(int max);
-        //Buffer();
         void putPositions(Vector2D pos);
         Vector2D * getPositions();
         void display();

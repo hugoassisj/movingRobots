@@ -15,7 +15,6 @@ class Source
         Vector2D * produce(Robot r[3]);
         void Saturate(Vector2D &pos);
         int getId();
-        bool randOperator();
 };
 
 #endif // SOURCE_H

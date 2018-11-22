@@ -12,7 +12,6 @@ void *CreateRobots( void *ptr )
 
 }
 
-
 mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainWindow)
 {
     ui->setupUi(this);
@@ -21,13 +20,11 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
     timer->start(200);
 }
 
-   int i=1;
 void mainWindow::UIupdate()
 {
    PosicionaRobos(r1,r2,r3);
    ShowPositions(r1, r2, r3);
-   updateProgressBar(i++,10); //b1->getSize(),b1->getMaxSize());
-   if(i==10)i=1;
+   updateProgressBar(b1->getSize(),b1->getMaxSize());
 }
 
 void mainWindow::DefineRobos(Robot &robo1, Robot &robo2, Robot &robo3)
@@ -157,8 +154,7 @@ int mainWindow::getSlider3Value()
 
 void mainWindow::updateProgressBar(int size, int max)
 {
-    int val = 100* size/ max;
     ui->max_l->setText(QString::number(max));
     ui->itens_l->setText(QString::number(size));
-    ui->progressBar->setValue((int)val);  
+    ui->progressBar->setValue((int)(100 * size/ max));  
 }
