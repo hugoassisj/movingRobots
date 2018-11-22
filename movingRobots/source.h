@@ -7,12 +7,13 @@ class Source
     public:
         int id;
         int time;
-        Vector2D newPos[3];
+        int op;
+        Vector2D newPos;
 
         Source(int _id);
         void SetTime(int t);
         int GetTime();
-        Vector2D * produce(Robot r[3]);
+        Vector2D produce(Robot r);
         void Saturate(Vector2D &pos);
         int getId();
 };

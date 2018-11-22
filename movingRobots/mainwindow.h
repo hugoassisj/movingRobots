@@ -16,7 +16,7 @@ public:
     explicit mainWindow(QWidget *parent = 0);
     void DefineRobos(Robot &robo1, Robot &robo2, Robot &robo3);
     void DefineBuffer(Buffer * buff);
-    void DefineSources(Source &source1, Source &source2, Source &source3);
+    void DefineSources(Source * source1, Source * source2, Source * source3);
     void PosicionaRobos(Robot &robo1, Robot &robo2, Robot &robo3);
     void ShowPositions(Robot &robo1, Robot &robo2, Robot &robo3);
     int getSlider1Value();
@@ -49,6 +49,10 @@ private:
     Robot r2;
     Robot r3;
     Buffer * b1;
+    Source * s1;
+    Source * s2;
+    Source * s3;
+    Vector2D pos;
 };
 
 #endif // MAINWINDOW_H

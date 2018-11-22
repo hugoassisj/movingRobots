@@ -35,7 +35,7 @@ void Source::Saturate(Vector2D &pos)
     }
     else if (pos.x < 0)
     {
-        pos.x = 400 - pos.x;
+        pos.x = 380 - pos.x - 20;
     }
 
     if (pos.y > 280)
@@ -44,36 +44,32 @@ void Source::Saturate(Vector2D &pos)
     }
     else if (pos.y < 0)
     {
-        pos.y = 300 - pos.y;
+        pos.y = 280 - pos.y - 20;
     }
 }
 
 //Produz Posições para os 3 robôs
-Vector2D * Source::produce(Robot r[3])
+Vector2D Source::produce(Robot r)
 {
-    int op;
-    for (int robot = 0; robot < 3; ++robot)
+    op = (rand() % 2);
+    if (op == 0)
     {
-        op = (rand() % 2);
-        if (op == 0)
-        {
-            newPos[robot].x = r[robot].getPosition().x - (rand() % 40/20 + 1) * 20;
-        }
-        else
-        {
-            newPos[robot].x = r[robot].getPosition().x - (rand() % 40/20 + 1) * 20;
-        }
-
-        op = (rand() % 2);
-        if (op == 0)
-        {
-            newPos[robot].y = r[robot].getPosition().y + (rand() % 40/20 + 1) * 20;
-        }
-        else
-        {
-            newPos[robot].y = r[robot].getPosition().y + (rand() % 40/20 + 1) * 20;
-        }
-        Saturate(newPos[robot]);
+        newPos.x = r.getPosition().x - (rand() % 20/20 + 1) * 20;
     }
+    else
+    {
+        newPos.x = r.getPosition().x + (rand() % 20/20 + 1) * 20;
+    }
+
+    op = (rand() % 2);
+    if (op == 0)
+    {
+        newPos.y = r.getPosition().y - (rand() % 20/20 + 1) * 20;
+    }
+    else
+    {
+        newPos.y = r.getPosition().y + (rand() % 20/20 + 1) * 20;
+    }
+    Saturate(newPos);
     return newPos;
 }

@@ -7,11 +7,6 @@
 
 using namespace std;
 
-void *CreateRobots( void *ptr )
-{
-
-}
-
 mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainWindow)
 {
     ui->setupUi(this);
@@ -34,6 +29,12 @@ void mainWindow::DefineRobos(Robot &robo1, Robot &robo2, Robot &robo3)
     r3 = robo3;
 }
 
+void mainWindow::DefineSources(Source * source1, Source * source2, Source * source3)
+{
+    s1 = source1;
+    s2 = source2;
+    s3 = source3;
+}
 void mainWindow::DefineBuffer(Buffer * buff)
 {
     b1 = buff;
@@ -48,26 +49,16 @@ void mainWindow::PosicionaRobos(Robot &robo1, Robot &robo2, Robot &robo3)
 
 void mainWindow::ShowPositions(Robot &robo1, Robot &robo2, Robot &robo3)
 {
-    ui->rob1_x->setText(QString::number(robo1.getPosition().x/20 +1));
-    ui->rob1_y->setText(QString::number(robo1.getPosition().y/20 +1));
+    ui->rob1_x->setText(QString::number(robo1.getPosition().x/20 + 1));
+    ui->rob1_y->setText(QString::number(robo1.getPosition().y/20 + 1));
 
-    ui->rob2_x->setText(QString::number(robo2.getPosition().x/20 +1));
-    ui->rob2_y->setText(QString::number(robo2.getPosition().y/20 +1));
+    ui->rob2_x->setText(QString::number(robo2.getPosition().x/20 + 1));
+    ui->rob2_y->setText(QString::number(robo2.getPosition().y/20 + 1));
 
-    ui->rob3_x->setText(QString::number(robo3.getPosition().x/20 +1));
-    ui->rob3_y->setText(QString::number(robo3.getPosition().y/20 +1));
+    ui->rob3_x->setText(QString::number(robo3.getPosition().x/20 + 1));
+    ui->rob3_y->setText(QString::number(robo3.getPosition().y/20 + 1));
 }
 
-void mainWindow::DefineSources(Source &source1, Source &source2, Source &source3)
-{
-//    s1 = source1;
-//    s2 = source2;
-//    s3 = source3;
-
-//    s1.SetTime(ui->horizontalSlider->value());
-//    s2.SetTime(ui->horizontalSlider_2->value());
-//    s3.SetTime(ui->horizontalSlider_3->value());
-}
 
 mainWindow::~mainWindow()
 {
@@ -76,49 +67,19 @@ mainWindow::~mainWindow()
 
 void mainWindow::on_robot1_clicked()
 {
-   Vector2D pos = r1.getPosition();
-   pos.x+=20;
-   pos.y+=20;
-   if (pos.x > 380)
-   {
-       pos.x = pos.x - 380 - 20;
-   }
-   if (pos.y > 280)
-   {
-       pos.y = pos.y - 280 - 20;
-   }
+   pos = s1->produce(r1);
    r1.setPosition(pos);
 }
 
 void mainWindow::on_robot2_clicked()
 {
-    Vector2D pos = r2.getPosition();
-    pos.x+=20;
-    pos.y+=20;
-    if (pos.x > 380)
-    {
-        pos.x = pos.x - 380 - 20;
-    }
-    if (pos.y > 280)
-    {
-        pos.y = pos.y - 280 - 20;
-    }
+    pos = s2->produce(r2);
     r2.setPosition(pos);
 }
 
 void mainWindow::on_robot3_clicked()
 {
-    Vector2D pos = r3.getPosition();
-    pos.x+=20;
-    pos.y+=20;
-    if (pos.x > 380)
-    {
-        pos.x = pos.x - 380 - 20;
-    }
-    if (pos.y > 280)
-    {
-        pos.y = pos.y - 280 - 20;
-    }
+    pos = s3->produce(r3);
     r3.setPosition(pos);
 }
 

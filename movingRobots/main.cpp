@@ -17,22 +17,18 @@ Robot r1 = Robot();
 Robot r2 = Robot();
 Robot r3 = Robot();
 
+Source s1 = Source(0);
+Source s2 = Source(1);
+Source s3 = Source(2);
+
 mainWindow *UIptr;
 
 Robot allbots[3] = {r1, r2, r3};
 
-struct sources
-{
-    Source s1 = Source(0);
-    Source s2 = Source(1);
-    Source s3 = Source(2);
-};
-
 Buffer b(BUFFER_SIZE);
 
-sources ss;
 
-Vector2D * new_pos;
+Vector2D  new_pos[3];
 
 //Source_Thread1------------------------------------------------------------------------------------
 void *Source_Thread1(void* ptr)
@@ -42,10 +38,12 @@ void *Source_Thread1(void* ptr)
     {
 
         //Source Produz uma nova Posição pra cada Robô
-        new_pos = ss.s1.produce(allbots);
+        new_pos[0] = s1.produce(r1);
+        new_pos[1] = s1.produce(r2);
+        new_pos[2] = s1.produce(r3);
 
         //Mostra essas Novas Posições
-        cout <<"Source: " << ss.s1.getId() + 1 << "  -------------------------------------------------------------------"<< endl;
+        cout <<"Source: " << s1.getId() + 1 << "  -------------------------------------------------------------------"<< endl;
         for (int robot = 0; robot < 3; ++robot)
         {
             cout << "Robot: " << robot + 1 << " |X: " << new_pos[robot].x << " |Y: " << new_pos[robot].y << endl;
@@ -70,18 +68,17 @@ void *Source_Thread2(void* ptr)
     while (true)
     {
         //Source Produz uma nova Posição pra cada Robô
-        new_pos = ss.s2.produce(allbots);
+        new_pos[0] = s2.produce(r1);
+        new_pos[1] = s2.produce(r2);
+        new_pos[2] = s2.produce(r3);
 
         //Mostra essas Novas Posições
-        cout <<"Source: " << ss.s2.getId() + 1 << "  -------------------------------------------------------------------"<< endl;
+        cout <<"Source: " << s2.getId() + 1 << "  -------------------------------------------------------------------"<< endl;
         for (int robot = 0; robot < 3; ++robot)
         {
             cout << "Robot: " << robot + 1 << " |X: " << new_pos[robot].x << " |Y: " << new_pos[robot].y << endl;
         }
         cout << endl;
-
-        //Posição é Passada ao Buffer
-        //b.populate(s2, npos);
 
         usleep(UIptr->getSlider2Value()*1000);
     }
@@ -98,18 +95,17 @@ void *Source_Thread3(void* ptr)
     while (true)
     {
         //Source Produz uma nova Posição pra cada Robô
-        new_pos = ss.s3.produce(allbots);
+        new_pos[0] = s3.produce(r1);
+        new_pos[1] = s3.produce(r2);
+        new_pos[2] = s3.produce(r3);
 
         //Mostra essas Novas Posições
-        cout <<"Source: " << ss.s3.getId() + 1 << "  -------------------------------------------------------------------"<< endl;
+        cout <<"Source: " << s3.getId() + 1 << "  -------------------------------------------------------------------"<< endl;
         for (int robot = 0; robot < 3; ++robot)
         {
             cout << "Robot: " << robot + 1 << " |X: " << new_pos[robot].x << " |Y: " << new_pos[robot].y << endl;
         }
         cout << endl;
-
-        //Posição é Passada ao Buffer
-        //b.populate(s1, npos);
 
        usleep(UIptr->getSlider3Value()*1000);
     }
@@ -122,6 +118,7 @@ void *Source_Thread3(void* ptr)
 //Buffer_Thread-------------------------------------------------------------------------------------
 void *Buffer_Thread(void* ptr)
 {
+    cout << (char *) ptr << endl;
     while (true)
     {
         usleep(100000);
@@ -155,11 +152,10 @@ int main(int argc, char *argv[])
     mainWindow w;
     UIptr = &w;
 
-    w.DefineSources(ss.s1,ss.s2,ss.s3);
+    w.DefineSources(&s1, &s2, &s3);
     w.DefineBuffer(&b);
     w.DefineRobos(r1, r2, r3);
-    w.PosicionaRobos(r1,r2,r3);
-    w.ShowPositions(r1,r2,r3);
+
     w.show();
 
     //--------------------------------------------------------------------------------------------------
@@ -172,6 +168,7 @@ int main(int argc, char *argv[])
     {
         cout << "Failed to Create Buffer Thread" << endl;
     }
+    usleep(5000);
     //--------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------
 
@@ -182,12 +179,13 @@ int main(int argc, char *argv[])
     //Cria Threads Processador
     //--------------------------------------------------------------------------------------------------
     pthread_t ProcessThread;
-    const char *ProcessMessage = "Criacao do Buffer Iniciada";
+    const char *ProcessMessage = "Criacao do Process Iniciada";
     int ProcessRet = pthread_create( &ProcessThread, NULL, Process_Thread, (void*) ProcessMessage);
     if(ProcessRet)
     {
         cout << "Failed to Create Process Thread" << endl;
     }
+    usleep(5000);
     //--------------------------------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------------------
 
@@ -204,7 +202,7 @@ int main(int argc, char *argv[])
     const char *SourceMessage3 = "Criacao de Source 3 Iniciada";
 
     int SourceRet1;
-    SourceRet1 = pthread_create( &SourceThread1, NULL, Source_Thread1, (void*) &w);
+    SourceRet1 = pthread_create( &SourceThread1, NULL, Source_Thread1, (void*) SourceMessage1);
     if(SourceRet1)
     {
         cout << "Failed to Create Source Thread 1" << endl;
