@@ -1,6 +1,6 @@
 # movingRobots
 
-Threads concurrency and synchronization example.
+Threads concurrency and synchronization example, written in C++ using Qt.
 
 # Instructions
 
