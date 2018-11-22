@@ -133,13 +133,11 @@ void mainWindow::on_pushButton_clicked()
 
 void mainWindow::on_pushButton_2_clicked()
 {
-
-
-    b1->putPositions(x);
-    x.y++;
-    x.x++;
-    x.sourceID++;
-    x.robotID++;
+//    b1->putPositions(x);
+//    x.y++;
+//    x.x++;
+//    x.sourceID++;
+//    x.robotID++;
 }
 
 void mainWindow::on_pushButton_3_clicked()

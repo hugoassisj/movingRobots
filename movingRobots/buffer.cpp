@@ -14,39 +14,54 @@ Buffer::Buffer(int max)
 
 void Buffer::display()
 {
+    bool a;
     pthread_mutex_lock( &mutex1 );
-    if (!buffer.size() >= 0)
+    a = buffer.size();
+    pthread_mutex_unlock( &mutex1 );
+    if (!a >= 0)
     {
         cout << endl;
-        cout << "Size: " << buffer.size() << endl;
+        cout << "Size: " << a << endl;
         cout << "--------------------------------------------------" << endl;
-        for (int var = 0; var < maxSize; ++var)
+        for (int var = 0; var < 25; ++var)
         {
+            pthread_mutex_lock( &mutex1 );
             cout << var+1 << ". X: " << buffer[var].x << " Y: " << buffer[var].y << " |SourceID: " << buffer[var].sourceID + 1 << " |RobotID: " << buffer[var].robotID + 1 << endl;
-
+            pthread_mutex_unlock( &mutex1 );
         }
     }
-    pthread_mutex_unlock( &mutex1 );
+
 }
 
 void Buffer::init()
 {
-    pthread_mutex_lock( &mutex1 );
+
     for (int var = 0; var < maxSize; ++var)
     {
+        pthread_mutex_lock( &mutex1 );
         buffer[var].x = -2;
         buffer[var].y = -2;
         buffer[var].sourceID = -2;
-        //buffer[var].robotID = -2;
+        buffer[var].robotID = -2;
+        pthread_mutex_unlock( &mutex1 );
     }
-    pthread_mutex_unlock( &mutex1 );
+
 }
 
 void Buffer::putPositions(Vector2D pos)
 {
-    cout << endl;
-    cout << "Inserido: " << " X: " << pos.x << " Y: " << pos.y << " |SourceID: "  << pos.sourceID << " |RobotID: " << pos.robotID + 1 <<  endl;
-    if (buffer.size() < maxSize)
+//    cout << endl;
+//    cout << "Inserido: " <<  endl;
+//    for (int robot = 0; robot < 3; ++robot)
+//    {
+//        cout << "Robot: " << robot + 1 << " |X: " << new_pos[robot].x << " |Y: " << new_pos[robot].y << " |SourceID: " << new_pos[robot].sourceID + 1 << " |RobotID: " << new_pos[robot].robotID + 1 <<endl;
+//    }
+//    cout << endl;
+    int bs;
+    pthread_mutex_lock( &mutex1 );
+    bs = buffer.size();
+    pthread_mutex_unlock( &mutex1 );
+    if (bs < maxSize)
     {
         pthread_mutex_lock( &mutex1 );
         buffer.push_back(pos);
@@ -56,14 +71,21 @@ void Buffer::putPositions(Vector2D pos)
 
 Vector2D Buffer::getPositions()
 {
-    if (buffer.size() > 0)
+    int bs;
+    pthread_mutex_lock( &mutex1 );
+    bs = buffer.size();
+    pthread_mutex_unlock( &mutex1 );
+    if (bs > 0)
     {
         pthread_mutex_lock( &mutex1 );
         Vector2D element = buffer.front();
+        pthread_mutex_unlock( &mutex1 );
+
+        pthread_mutex_lock( &mutex1 );
         buffer.pop_front();
         pthread_mutex_unlock( &mutex1 );
-        cout << endl;
-        cout << "Removido: " << " X: " << element.x << " Y: " << element.y << " |SourceID: " << element.sourceID << " |RobotID: " << element.robotID + 1 << endl;
+        //cout << endl;
+        //cout << "Removido: " << " X: " << element.x << " Y: " << element.y << " |SourceID: " << element.sourceID << " |RobotID: " << element.robotID + 1 << endl;
         return element;
     }
 }

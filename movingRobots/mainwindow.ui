@@ -947,7 +947,7 @@
       <number>4000</number>
      </property>
      <property name="value">
-      <number>2000</number>
+      <number>4000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -975,7 +975,7 @@
       <number>4000</number>
      </property>
      <property name="value">
-      <number>2925</number>
+      <number>4000</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -997,7 +997,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>4000</string>
+      <string>1000</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_7">
@@ -1010,7 +1010,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>2000</string>
+      <string>700</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_8">
@@ -1023,7 +1023,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>2925</string>
+      <string>900</string>
      </property>
     </widget>
    </widget>
