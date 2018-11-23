@@ -12,7 +12,7 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
     ui->setupUi(this);
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(UIupdate()));
-    timer->start(200);
+    timer->start(100);
 
     x.x = 30;
     x.y = 50;
@@ -22,9 +22,9 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
 
 void mainWindow::UIupdate()
 {
-   PosicionaRobos(r1,r2,r3);
-   ShowPositions(r1, r2, r3);
-   updateProgressBar(b1->getSize(),b1->getMaxSize());
+    PosicionaRobos(r1,r2,r3);
+    ShowPositions(r1, r2, r3);
+    updateProgressBar(b1->getSize(),b1->getMaxSize());
 }
 
 void mainWindow::DefineRobos(Robot * robo1, Robot * robo2, Robot * robo3)
@@ -40,9 +40,15 @@ void mainWindow::DefineSources(Source * source1, Source * source2, Source * sour
     s2 = source2;
     s3 = source3;
 }
+
 void mainWindow::DefineBuffer(Buffer * buff)
 {
     b1 = buff;
+}
+
+void mainWindow::DefineProcess(Process * process)
+{
+    p1 = process;
 }
 
 void mainWindow::PosicionaRobos(Robot * robo1, Robot * robo2, Robot * robo3)
@@ -72,20 +78,20 @@ mainWindow::~mainWindow()
 
 void mainWindow::on_robot1_clicked()
 {
-//    pos = s1->produce(*1);
-//    r1->setPosition(pos);
+    //    pos = s1->produce(*1);
+    //    r1->setPosition(pos);
 }
 
 void mainWindow::on_robot2_clicked()
 {
-//    pos = s2->produce(r2);
-//    r2->setPosition(pos);
+    //    pos = s2->produce(r2);
+    //    r2->setPosition(pos);
 }
 
 void mainWindow::on_robot3_clicked()
 {
-//    pos = s3->produce(r3);
-//    r3->setPosition(pos);
+    //    pos = s3->produce(r3);
+    //    r3->setPosition(pos);
 }
 
 void mainWindow::on_horizontalSlider_valueChanged(int value)
@@ -110,7 +116,7 @@ int mainWindow::getSlider1Value()
 
 int mainWindow::getSlider2Value()
 {
-   return ui->horizontalSlider_2->value();
+    return ui->horizontalSlider_2->value();
 }
 
 int mainWindow::getSlider3Value()
@@ -122,22 +128,33 @@ void mainWindow::updateProgressBar(int size, int max)
 {
     ui->max_l->setText(QString::number(max));
     ui->itens_l->setText(QString::number(size));
-    ui->progressBar->setValue((int)(100 * size/ max));  
+    ui->progressBar->setValue((int)(100 * size/ max));
 }
+
 
 void mainWindow::on_pushButton_clicked()
 {
-    b1->getPositions();
+    Vector2D poss, x, y;
+    poss = b1->getPositions();
+
+    x = poss.get();
+    int linha = x.robotID;
+    int coluna = x.sourceID;
+
+    int l = p1->filterMatrixPosition(linha);
+    int c = p1->filterMatrixPosition(coluna);
+    p1->setProcess(l, c, poss);
+    //p1->display();
 
 }
 
 void mainWindow::on_pushButton_2_clicked()
 {
-//    b1->putPositions(x);
-//    x.y++;
-//    x.x++;
-//    x.sourceID++;
-//    x.robotID++;
+    //    b1->putPositions(x);
+    //    x.y++;
+    //    x.x++;
+    //    x.sourceID++;
+    //    x.robotID++;
 }
 
 void mainWindow::on_pushButton_3_clicked()

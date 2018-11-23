@@ -1,6 +1,9 @@
 #include "robot.h"
 #include <stdlib.h>
 #include <time.h>
+#include <iostream>
+
+using namespace std;
 
 
 Robot::Robot(int id)
@@ -13,9 +16,9 @@ Robot::Robot(int id)
         seeded = true;
     }
 
-   pos.x = (rand() % 18)*20;
-   pos.y = (rand() % 14)*20;
-   this->id = id;
+    pos.x = (rand() % 18)*20;
+    pos.y = (rand() % 14)*20;
+    this->id = id;
 }
 
 void Robot::setPosition(Vector2D p)
@@ -44,4 +47,3 @@ int Robot::getID()
     pthread_mutex_unlock( &mutex1 );
     return a;
 }
-

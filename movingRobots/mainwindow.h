@@ -5,6 +5,7 @@
 #include "robot.h"
 #include "source.h"
 #include "buffer.h"
+#include "process.h"
 
 namespace Ui { class mainWindow; }
 
@@ -17,6 +18,7 @@ public:
     void DefineRobos(Robot * robo1, Robot * robo2, Robot * robo3);
     void DefineBuffer(Buffer * buff);
     void DefineSources(Source * source1, Source * source2, Source * source3);
+    void DefineProcess(Process * process);
     void PosicionaRobos(Robot * robo1, Robot * robo2, Robot * robo3);
     void ShowPositions(Robot * robo1, Robot * robo2, Robot * robo3);
     int getSlider1Value();
@@ -58,6 +60,7 @@ private:
     Source * s2;
     Source * s3;
     Vector2D pos;
+    Process * p1;
 
     Vector2D x;
 };

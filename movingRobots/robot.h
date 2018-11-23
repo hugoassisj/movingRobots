@@ -8,13 +8,13 @@ class Robot
 
     pthread_mutex_t mutex1;
 
-    public:
-        int id;
-        Robot(int id);
-        Vector2D pos;
-        Vector2D getPosition();
-        void setPosition(Vector2D p);
-        int getID();
+public:
+    int id;
+    Robot(int id);
+    Vector2D pos;
+    Vector2D getPosition();
+    void setPosition(Vector2D p);
+    int getID();
 };
 
 #endif // ROBOT_H

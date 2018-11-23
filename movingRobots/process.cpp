@@ -32,12 +32,11 @@ int Process::getMean(int col)
 
 }
 
-void Process::setProcess(int lin, int col, int x, int y)
+void Process::setProcess(int lin, int col, Vector2D pos)
 {
-    pthread_mutex_lock( &mutex1 );
-    process[lin][col].x = x;
-    process[lin][col].y = y;
-    pthread_mutex_unlock( &mutex1 );
+    //pthread_mutex_lock( &mutex1 );
+    process[lin][col].set(pos);
+    //pthread_mutex_unlock( &mutex1 );
 }
 
 void Process::display()
@@ -47,9 +46,9 @@ void Process::display()
     {
         for (int col = 0; col < 3; ++col)
         {
-            pthread_mutex_lock( &mutex1 );
-            cout << "\t" << "X: " << process[lin][col].x << "\t" << " Y: " << process[lin][col].y <<"\t";
-            pthread_mutex_unlock( &mutex1 );
+            //pthread_mutex_lock( &mutex1 );
+            cout << "X: " << process[lin][col].x << "\tY: " << process[lin][col].y << endl;
+            //pthread_mutex_unlock( &mutex1 );
         }
         cout << endl;
     }

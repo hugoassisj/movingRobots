@@ -12,7 +12,7 @@ class Process
         Process();
         int filterMatrixPosition(int param);
 
-        void setProcess(int lin, int col, int x, int y);
+        void setProcess(int lin, int col, Vector2D pos);
         int getMean(int col);
         void display();
         void checkLine();
