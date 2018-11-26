@@ -27,16 +27,30 @@ int Process::filterMatrixPosition(int param)
     }
 }
 
-int Process::getMean(int col)
+Vector2D Process::getMean(int linha)
 {
+    pthread_mutex_lock( &mutex1 );
+    int meanX = (process[linha][0].x + process[linha][1].x + process[linha][2].x)/3;
+    int meanY = (process[linha][0].y + process[linha][1].y + process[linha][2].y)/3;
+    pthread_mutex_unlock( &mutex1 );
 
+//    if (meanX % 10 != 0)
+//    {
+//        meanX += (10 - meanX % 10);
+//    }
+//    if (meanY % 10 != 0)
+//    {
+//        meanY += (10 - meanY % 10);
+//    }
+    cout << endl << "X: " << meanX << "Y: " << meanY << endl;
+    return Vector2D(meanX, meanY, 100, linha);
 }
 
 void Process::setProcess(int lin, int col, Vector2D pos)
 {
-    //pthread_mutex_lock( &mutex1 );
+    pthread_mutex_lock( &mutex1 );
     process[lin][col].set(pos);
-    //pthread_mutex_unlock( &mutex1 );
+    pthread_mutex_unlock( &mutex1 );
 }
 
 void Process::display()
@@ -46,40 +60,70 @@ void Process::display()
     {
         for (int col = 0; col < 3; ++col)
         {
-            //pthread_mutex_lock( &mutex1 );
-            cout << "X: " << process[lin][col].x << "\tY: " << process[lin][col].y << endl;
-            //pthread_mutex_unlock( &mutex1 );
+            pthread_mutex_lock( &mutex1 );
+            cout << "X: " << process[lin][col].x << "\tY: " << process[lin][col].y << "\t|\t";
+            pthread_mutex_unlock( &mutex1 );
         }
         cout << endl;
     }
 
 }
 
-void Process::checkLine()
+Vector2D Process::checkLine()
 {
 
     for (int linha = 0; linha < 3; ++linha)
     {
         pthread_mutex_lock( &mutex1 );
-        if (process[linha][0].x != 999 && process[linha][1].x != 999 && process[linha][2].x != 999)
+        int x1 = process[linha][0].x;
+        int x2 = process[linha][1].x;
+        int x3 = process[linha][2].x;
+        pthread_mutex_unlock( &mutex1 );
+        if (x1 != -1 && x2 != -1 && x3 != -1)
         {
 
-            //getMean(0);
+            Vector2D nPos = getMean(linha);
             resetLine(linha);
-
+            return nPos;
         }
-        pthread_mutex_unlock( &mutex1 );
-    }
+    }    
 }
 
 void Process::resetLine(int line)
 {
     for (int col = 0; col < 3; ++col)
     {
-        //pthread_mutex_lock( &mutex1 );
-        process[line][col].x = 999;
-        process[line][col].y = 999;
-        //pthread_mutex_unlock( &mutex1 );
+        pthread_mutex_lock( &mutex1 );
+        process[line][col].x = -1;
+        process[line][col].y = -1;
+        pthread_mutex_unlock( &mutex1 );
     }
 
+}
+
+bool Process::available()
+{
+    int cont = 0;
+    for (int l = 0; l < 3; ++l)
+    {
+        for (int c = 0; c < 3; ++c)
+        {
+            pthread_mutex_lock( &mutex1 );
+            int x = process[l][c].x;
+            int y = process[l][c].y;
+            pthread_mutex_unlock( &mutex1 );
+            if (x == -1 && y == -1)
+            {
+                cont += 1;
+            }
+        }
+    }
+    if (cont > 0)
+    {
+       return true;
+    }
+    else
+    {
+        return false;
+    }
 }

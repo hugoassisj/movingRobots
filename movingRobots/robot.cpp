@@ -16,16 +16,18 @@ Robot::Robot(int id)
         seeded = true;
     }
 
+    pthread_mutex_lock( &mutex1 );
     pos.x = (rand() % 18)*20;
     pos.y = (rand() % 14)*20;
     this->id = id;
+    pthread_mutex_unlock( &mutex1 );
 }
 
 void Robot::setPosition(Vector2D p)
 {
     pthread_mutex_lock( &mutex1 );
-    pos.x = p.x;
-    pos.y = p.y;
+    this->pos.x = p.x;
+    this->pos.y = p.y;
     pthread_mutex_unlock( &mutex1 );
 }
 

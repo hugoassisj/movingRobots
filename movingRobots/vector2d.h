@@ -14,7 +14,7 @@ public:
     int robotID;
 
     Vector2D();
-    Vector2D(int x, int y);
+    Vector2D(int x, int y, int sid, int rid);
     Vector2D get();
     void set(Vector2D v);
 };

@@ -134,17 +134,39 @@ void mainWindow::updateProgressBar(int size, int max)
 
 void mainWindow::on_pushButton_clicked()
 {
-    Vector2D poss, x, y;
-    poss = b1->getPositions();
+    Vector2D poss, x, newPos;
+    int r;
 
-    x = poss.get();
-    int linha = x.robotID;
-    int coluna = x.sourceID;
+    if (p1->available())
+    {
+        poss = b1->getPositions();
+        x = poss.get();
+        int linha = x.robotID;
+        int coluna = x.sourceID;
 
-    int l = p1->filterMatrixPosition(linha);
-    int c = p1->filterMatrixPosition(coluna);
-    p1->setProcess(l, c, poss);
-    //p1->display();
+        int l = p1->filterMatrixPosition(linha);
+        int c = p1->filterMatrixPosition(coluna);
+
+        p1->setProcess(l, c, poss);
+        p1->display();
+        newPos = p1->checkLine();
+        r = newPos.get().robotID;
+        switch (r) {
+        case 0:
+            r1->setPosition(newPos);
+            break;
+        case 1:
+            r2->setPosition(newPos);
+            break;
+        case 2:
+            r3->setPosition(newPos);
+            break;
+        default:
+            cout << "nao rolou" << endl;
+            break;
+        }
+        p1->display();
+    }
 
 }
 
@@ -160,4 +182,13 @@ void mainWindow::on_pushButton_2_clicked()
 void mainWindow::on_pushButton_3_clicked()
 {
     b1->display();
+    p1->display();
+}
+
+void mainWindow::on_checkBox_stateChanged(int arg1)
+{
+    if (ui->checkBox->checkState() != 0)
+    {
+        s1E = 0;
+    }
 }

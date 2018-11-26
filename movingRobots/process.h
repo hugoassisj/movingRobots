@@ -5,18 +5,20 @@
 
 class Process
 {
-    Vector2D process[3][3];
+
     pthread_mutex_t mutex1;
 
     public:
+        Vector2D process[3][3];
         Process();
         int filterMatrixPosition(int param);
 
         void setProcess(int lin, int col, Vector2D pos);
-        int getMean(int col);
+        Vector2D getMean(int col);
         void display();
-        void checkLine();
+        Vector2D checkLine();
         void resetLine(int line);
+        bool available();
 
 
 };

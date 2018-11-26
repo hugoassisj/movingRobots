@@ -8,8 +8,10 @@ using namespace std;
 Source::Source(int _id)
 {
     mutex1 = PTHREAD_MUTEX_INITIALIZER;
+    //pthread_mutex_lock( &mutex1 );
     id = _id;
     time = 0;
+    //pthread_mutex_unlock( &mutex1 );
 }
 
 int Source::getId()
@@ -62,13 +64,13 @@ Vector2D Source::produce(Robot r)
     if (op == 0)
     {
         pthread_mutex_lock( &mutex1 );
-        newPos.x = r.getPosition().x - (rand() % 20/20 + 1) * 20;
+        newPos.x = r.getPosition().x - (rand() % 2/20 + 1) * 20;
         pthread_mutex_unlock( &mutex1 );
     }
     else
     {
         pthread_mutex_lock( &mutex1 );
-        newPos.x = r.getPosition().x + (rand() % 20/20 + 1) * 20;
+        newPos.x = r.getPosition().x + (rand() % 2/20 + 1) * 20;
         pthread_mutex_unlock( &mutex1 );
     }
 
@@ -76,19 +78,27 @@ Vector2D Source::produce(Robot r)
     if (op == 0)
     {
         pthread_mutex_lock( &mutex1 );
-        newPos.y = r.getPosition().y - (rand() % 20/20 + 1) * 20;
+        newPos.y = r.getPosition().y - (rand() % 2/20 + 1) * 20;
         pthread_mutex_unlock( &mutex1 );
     }
     else
     {
         pthread_mutex_lock( &mutex1 );
-        newPos.y = r.getPosition().y + (rand() % 20/20 + 1) * 20;
+        newPos.y = r.getPosition().y + (rand() % 2/20 + 1) * 20;
         pthread_mutex_unlock( &mutex1 );
     }
 
+    //pthread_mutex_lock( &mutex1 );
     Saturate(newPos);
+    //pthread_mutex_unlock( &mutex1 );
 
-    newPos.sourceID = this->getId();
-    newPos.robotID = r.getID();
+    int sid_ = this->getId();
+    int rid_ = r.getID();
+
+    //pthread_mutex_lock( &mutex1 );
+    newPos.sourceID = sid_;
+    newPos.robotID = rid_;
+    //pthread_mutex_unlock( &mutex1 );
+
     return newPos;
 }

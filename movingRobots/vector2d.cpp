@@ -1,11 +1,13 @@
 #include "vector2d.h"
 
-Vector2D::Vector2D(int x, int y)
+Vector2D::Vector2D(int x, int y, int sid, int rid)
 {
     mutex1 = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock( &mutex1 );
     this->x = x;
     this->y = y;
+    this->sourceID = sid;
+    this->robotID = rid;
     pthread_mutex_unlock( &mutex1 );
 }
 
