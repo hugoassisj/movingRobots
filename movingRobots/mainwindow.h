@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QKeyEvent>
 #include "robot.h"
 #include "source.h"
 #include "buffer.h"
@@ -27,6 +28,7 @@ public:
     int getSlider4Value();
     void updateProgressBar(int size, int max);
     bool s1E,s2E,s3E, s4E;
+    void keyPressEvent(QKeyEvent*);
 
     ~mainWindow();
 
@@ -75,6 +77,9 @@ private:
     Source * s3;
     Vector2D pos;
     Process * p1;
+    int selected;
+
+    Robot * Robots[3];
 
     Vector2D x;
 };

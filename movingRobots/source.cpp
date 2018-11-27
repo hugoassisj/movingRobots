@@ -38,22 +38,22 @@ int Source::GetTime()
 //Quando estoura a tela, volta ao inicio pelo outro lado
 void Source::Saturate(Vector2D &pos)
 {
-    if (pos.x > 370)
+    if (pos.x > 390)
     {
-        pos.x = pos.x - 370;
+        pos.x = pos.x - 400;
     }
     else if (pos.x < -10)
     {
-        pos.x = 370 + pos.x;
+        pos.x = 400 + pos.x;
     }
 
-    if (pos.y > 270)
+    if (pos.y > 290)
     {
-        pos.y = pos.y - 270;
+        pos.y = pos.y - 300;
     }
     else if (pos.y < -10)
     {
-        pos.y = 270 + pos.y;
+        pos.y = 300 + pos.y;
     }
 }
 
@@ -66,7 +66,7 @@ Vector2D Source::produce(Robot r)
     if (op == 0)
     {
         pthread_mutex_lock( &mutex1 );
-        newPos.x = r.getPosition().x - (rand() % NEW_POS_RANGE);
+        newPos.x = r.getPosition().x + (rand() % NEW_POS_RANGE);
         pthread_mutex_unlock( &mutex1 );
     }
     else
@@ -80,7 +80,7 @@ Vector2D Source::produce(Robot r)
     if (op == 0)
     {
         pthread_mutex_lock( &mutex1 );
-        newPos.y = r.getPosition().y - (rand() % NEW_POS_RANGE);
+        newPos.y = r.getPosition().y + (rand() % NEW_POS_RANGE);
         pthread_mutex_unlock( &mutex1 );
     }
     else
@@ -97,10 +97,8 @@ Vector2D Source::produce(Robot r)
     int sid_ = this->getId();
     int rid_ = r.getID();
 
-    //pthread_mutex_lock( &mutex1 );
     newPos.sourceID = sid_;
     newPos.robotID = rid_;
-    //pthread_mutex_unlock( &mutex1 );
 
     return newPos;
 }

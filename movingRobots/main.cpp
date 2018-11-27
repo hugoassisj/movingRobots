@@ -18,6 +18,8 @@ Robot r1 = Robot(0);
 Robot r2 = Robot(1);
 Robot r3 = Robot(2);
 
+Robot * Robots[3] = {&r1, &r2, &r3};
+
 Source s1 = Source(0);
 Source s2 = Source(1);
 Source s3 = Source(2);
@@ -37,6 +39,12 @@ Vector2D  new_pos[3];
 
 int Time = 80000;
 
+
+void showPos()
+{
+
+}
+
 //Source_Thread1------------------------------------------------------------------------------------
 void *Source_Thread1(void* ptr)
 {
@@ -47,15 +55,12 @@ void *Source_Thread1(void* ptr)
         if (UIptr->s1E)
         {
             //Source Produz uma nova Posição pra cada Robô
-            new_pos[0].set(s1.produce(r1));
-            b1.putPositions(new_pos[0].get());
-            usleep(rand() % Time);
-            new_pos[1].set(s1.produce(r2));
-            b1.putPositions(new_pos[1].get());
-            usleep(rand() % Time);
-            new_pos[2].set(s1.produce(r3));
-            b1.putPositions(new_pos[2].get());
-            usleep(rand() % Time);
+            for (int robot = 0; robot < 3; ++robot)
+            {
+                new_pos[robot].set(s1.produce(*Robots[robot]));
+                b1.putPositions(new_pos[robot].get());
+                usleep(rand() % Time);
+            }
 
             //Mostra essas Novas Posições
 //            cout <<"Source: " << s1.getId() << "  -------------------------------------------------------------------"<< endl;
@@ -66,9 +71,7 @@ void *Source_Thread1(void* ptr)
 //            cout << endl;
         }
 
-
-
-        usleep(UIptr->getSlider1Value()*1000);
+    usleep(UIptr->getSlider1Value()*1000);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -86,15 +89,12 @@ void *Source_Thread2(void* ptr)
         if (UIptr->s2E)
         {
             //Source Produz uma nova Posição pra cada Robô
-            new_pos[0].set(s2.produce(r1));
-            b1.putPositions(new_pos[0].get());
-            usleep(rand() % Time);
-            new_pos[1].set(s2.produce(r2));
-            b1.putPositions(new_pos[1].get());
-            usleep(rand() % Time);
-            new_pos[2].set(s2.produce(r3));
-            b1.putPositions(new_pos[2].get());
-            usleep(rand() % Time);
+            for (int robot = 0; robot < 3; ++robot)
+            {
+                new_pos[robot].set(s2.produce(*Robots[robot]));
+                b1.putPositions(new_pos[robot].get());
+                usleep(rand() % Time);
+            }
 
             //Mostra essas Novas Posições
 //            cout <<"Source: " << s2.getId() << "  -------------------------------------------------------------------"<< endl;
@@ -104,10 +104,7 @@ void *Source_Thread2(void* ptr)
 //            }
 //            cout << endl;
         }
-
-
-
-        usleep(UIptr->getSlider2Value()*1000);
+    usleep(UIptr->getSlider2Value()*1000);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -125,15 +122,12 @@ void *Source_Thread3(void* ptr)
         if (UIptr->s3E)
         {
             //Source Produz uma nova Posição pra cada Robô
-            new_pos[0].set(s3.produce(r1));
-            b1.putPositions(new_pos[0].get());
-            usleep(rand() % Time);
-            new_pos[1].set(s3.produce(r2));
-            b1.putPositions(new_pos[1].get());
-            usleep(rand() % Time);
-            new_pos[2].set(s3.produce(r3));
-            b1.putPositions(new_pos[2].get());
-            usleep(rand() % Time);
+            for (int robot = 0; robot < 3; ++robot)
+            {
+                new_pos[robot].set(s3.produce(*Robots[robot]));
+                b1.putPositions(new_pos[robot].get());
+                usleep(rand() % Time);
+            }
 
             //Mostra essas Novas Posições
 //            cout <<"Source: " << s3.getId() << "  -------------------------------------------------------------------"<< endl;
@@ -143,7 +137,6 @@ void *Source_Thread3(void* ptr)
 //            }
 //            cout << endl;
         }
-
         usleep(UIptr->getSlider3Value()*1000);
     }
 }
@@ -173,21 +166,14 @@ void *Process_Thread(void* ptr)
                 int c = p1.filterMatrixPosition(coluna);
 
                 p1.setProcess(l, c, poss);
+
                 newPos = p1.checkLine();
+
                 r = newPos.get().robotID;
-                switch (r) {
-                case 0:
-                    r1.setPosition(newPos);
-                    break;
-                case 1:
-                    r2.setPosition(newPos);
-                    break;
-                case 2:
-                    r3.setPosition(newPos);
-                    break;
-                default:
-                    //cout << "nao rolou: " << r << endl;
-                    break;
+
+                if (r >=0 && r < 3)
+                {
+                    Robots[r]->setPosition(newPos);
                 }
             }
         }

@@ -5,6 +5,8 @@
 #include <pthread.h>
 #include <qtimer.h>
 
+#define KEY_MOVEMENT 3
+
 using namespace std;
 
 mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainWindow)
@@ -18,6 +20,7 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
     s2E = (bool)ui->checkBox_2->checkState();
     s3E = (bool)ui->checkBox_3->checkState();
     s4E = (bool)ui->checkBox_4->checkState();
+    selected = 0;
 }
 
 void mainWindow::UIupdate()
@@ -32,6 +35,10 @@ void mainWindow::DefineRobos(Robot * robo1, Robot * robo2, Robot * robo3)
     r1 = robo1;
     r2 = robo2;
     r3 = robo3;
+    Robots[0] = r1;
+    Robots[1] = r2;
+    Robots[2] = r3;
+
 }
 
 void mainWindow::DefineSources(Source * source1, Source * source2, Source * source3)
@@ -60,6 +67,7 @@ void mainWindow::PosicionaRobos(Robot * robo1, Robot * robo2, Robot * robo3)
 
 void mainWindow::ShowPositions(Robot * robo1, Robot * robo2, Robot * robo3)
 {
+
     ui->rob1_x->setText(QString::number(robo1->getPosition().x + 10));
     ui->rob1_y->setText(QString::number(robo1->getPosition().y + 10));
 
@@ -78,20 +86,20 @@ mainWindow::~mainWindow()
 
 void mainWindow::on_robot1_clicked()
 {
-    //    pos = s1->produce(*1);
-    //    r1->setPosition(pos);
+    selected = 0;
+    this->setFocus();
 }
 
 void mainWindow::on_robot2_clicked()
 {
-    //    pos = s2->produce(r2);
-    //    r2->setPosition(pos);
+    selected = 1;
+    this->setFocus();
 }
 
 void mainWindow::on_robot3_clicked()
 {
-    //    pos = s3->produce(r3);
-    //    r3->setPosition(pos);
+    selected = 2;
+    this->setFocus();
 }
 
 void mainWindow::on_horizontalSlider_valueChanged(int value)
@@ -213,4 +221,38 @@ void mainWindow::on_checkBox_3_stateChanged(int arg1)
 void mainWindow::on_checkBox_4_stateChanged(int arg1)
 {
     s4E = (bool)ui->checkBox_4->checkState();
+}
+
+void mainWindow::keyPressEvent(QKeyEvent* ke)
+{
+    Vector2D pos;
+    if (ke->key() == Qt::Key_Up)
+    {
+        pos = Robots[selected]->getPosition();
+        pos.y = pos.y - KEY_MOVEMENT ;
+        s1->Saturate(pos);
+        Robots[selected]->setPosition(pos);
+    }
+    if (ke->key() == Qt::Key_Down)
+    {
+        pos = Robots[selected]->getPosition();
+        pos.y = pos.y + KEY_MOVEMENT ;
+        s1->Saturate(pos);
+        Robots[selected]->setPosition(pos);
+    }
+    if (ke->key() == Qt::Key_Left)
+    {
+        pos = Robots[selected]->getPosition();
+        pos.x = pos.x - KEY_MOVEMENT ;
+        s1->Saturate(pos);
+        Robots[selected]->setPosition(pos);
+    }
+    if (ke->key() == Qt::Key_Right)
+    {
+        pos = Robots[selected]->getPosition();
+        pos.x = pos.x + KEY_MOVEMENT ;
+        s1->Saturate(pos);
+        Robots[selected]->setPosition(pos);
+    }
+
 }

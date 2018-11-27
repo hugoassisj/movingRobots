@@ -1,4 +1,7 @@
 #include "vector2d.h"
+#include <iostream>
+
+using namespace std;
 
 Vector2D::Vector2D(int x, int y, int sid, int rid)
 {
@@ -42,4 +45,12 @@ Vector2D Vector2D::get()
     pos.robotID = this->robotID;
     pthread_mutex_unlock( &mutex1 );
     return pos;
+}
+
+Vector2D Vector2D::operator++ (int)
+{
+    Vector2D result(*this);
+    result.x++;
+    result.y++;
+    return result;
 }

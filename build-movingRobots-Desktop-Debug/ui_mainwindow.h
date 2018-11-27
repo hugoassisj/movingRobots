@@ -115,6 +115,7 @@ public:
         mainWindow->resize(740, 430);
         mainWindow->setMinimumSize(QSize(740, 430));
         mainWindow->setMaximumSize(QSize(740, 500));
+        mainWindow->setFocusPolicy(Qt::ClickFocus);
         mainWindow->setDocumentMode(false);
         mainWindow->setTabShape(QTabWidget::Rounded);
         mainWindow->setUnifiedTitleAndToolBarOnMac(false);
