@@ -10,7 +10,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = movingRobots
 TEMPLATE = app
-CONFIG += console
 
 
 SOURCES += main.cpp\
