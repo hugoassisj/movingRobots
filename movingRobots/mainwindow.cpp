@@ -12,12 +12,12 @@ mainWindow::mainWindow(QWidget *parent) :  QMainWindow(parent), ui(new Ui::mainW
     ui->setupUi(this);
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(UIupdate()));
-    timer->start(100);
+    timer->start(5);
 
-    x.x = 30;
-    x.y = 50;
-    x.sourceID = 0;
-    x.robotID = 0;
+    s1E = (bool)ui->checkBox->checkState();
+    s2E = (bool)ui->checkBox_2->checkState();
+    s3E = (bool)ui->checkBox_3->checkState();
+    s4E = (bool)ui->checkBox_4->checkState();
 }
 
 void mainWindow::UIupdate()
@@ -60,14 +60,14 @@ void mainWindow::PosicionaRobos(Robot * robo1, Robot * robo2, Robot * robo3)
 
 void mainWindow::ShowPositions(Robot * robo1, Robot * robo2, Robot * robo3)
 {
-    ui->rob1_x->setText(QString::number(robo1->getPosition().x/20 + 1));
-    ui->rob1_y->setText(QString::number(robo1->getPosition().y/20 + 1));
+    ui->rob1_x->setText(QString::number(robo1->getPosition().x + 10));
+    ui->rob1_y->setText(QString::number(robo1->getPosition().y + 10));
 
-    ui->rob2_x->setText(QString::number(robo2->getPosition().x/20 + 1));
-    ui->rob2_y->setText(QString::number(robo2->getPosition().y/20 + 1));
+    ui->rob2_x->setText(QString::number(robo2->getPosition().x + 10));
+    ui->rob2_y->setText(QString::number(robo2->getPosition().y + 10));
 
-    ui->rob3_x->setText(QString::number(robo3->getPosition().x/20 + 1));
-    ui->rob3_y->setText(QString::number(robo3->getPosition().y/20 + 1));
+    ui->rob3_x->setText(QString::number(robo3->getPosition().x + 10));
+    ui->rob3_y->setText(QString::number(robo3->getPosition().y + 10));
 }
 
 
@@ -109,6 +109,11 @@ void mainWindow::on_horizontalSlider_3_valueChanged(int value)
     ui->label_8->setText(QString::number(value));
 }
 
+void mainWindow::on_horizontalSlider_4_valueChanged(int value)
+{
+    ui->label_11->setText(QString::number(value));
+}
+
 int mainWindow::getSlider1Value()
 {
     return ui->horizontalSlider->value();
@@ -124,6 +129,11 @@ int mainWindow::getSlider3Value()
     return ui->horizontalSlider_3->value();
 }
 
+int mainWindow::getSlider4Value()
+{
+    return ui->horizontalSlider_4->value();
+}
+
 void mainWindow::updateProgressBar(int size, int max)
 {
     ui->max_l->setText(QString::number(max));
@@ -136,7 +146,6 @@ void mainWindow::on_pushButton_clicked()
 {
     Vector2D poss, x, newPos;
     int r;
-
     if (p1->available())
     {
         poss = b1->getPositions();
@@ -187,8 +196,21 @@ void mainWindow::on_pushButton_3_clicked()
 
 void mainWindow::on_checkBox_stateChanged(int arg1)
 {
-    if (ui->checkBox->checkState() != 0)
-    {
-        s1E = 0;
-    }
+    s1E = (bool)ui->checkBox->checkState();
+}
+
+
+void mainWindow::on_checkBox_2_stateChanged(int arg1)
+{
+    s2E = (bool)ui->checkBox_2->checkState();
+}
+
+void mainWindow::on_checkBox_3_stateChanged(int arg1)
+{
+    s3E = (bool)ui->checkBox_3->checkState();
+}
+
+void mainWindow::on_checkBox_4_stateChanged(int arg1)
+{
+    s4E = (bool)ui->checkBox_4->checkState();
 }

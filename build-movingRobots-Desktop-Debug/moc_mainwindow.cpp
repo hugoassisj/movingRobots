@@ -22,7 +22,7 @@ static const uint qt_meta_data_mainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -36,11 +36,15 @@ static const uint qt_meta_data_mainWindow[] = {
       78,   72,   11,   11, 0x08,
      116,   72,   11,   11, 0x08,
      156,   72,   11,   11, 0x08,
-     196,   11,   11,   11, 0x08,
-     207,   11,   11,   11, 0x08,
-     231,   11,   11,   11, 0x08,
-     257,   11,   11,   11, 0x08,
-     288,  283,   11,   11, 0x08,
+     196,   72,   11,   11, 0x08,
+     236,   11,   11,   11, 0x08,
+     247,   11,   11,   11, 0x08,
+     271,   11,   11,   11, 0x08,
+     297,   11,   11,   11, 0x08,
+     328,  323,   11,   11, 0x08,
+     358,  323,   11,   11, 0x08,
+     390,  323,   11,   11, 0x08,
+     422,  323,   11,   11, 0x08,
 
        0        // eod
 };
@@ -51,10 +55,14 @@ static const char qt_meta_stringdata_mainWindow[] = {
     "value\0on_horizontalSlider_valueChanged(int)\0"
     "on_horizontalSlider_2_valueChanged(int)\0"
     "on_horizontalSlider_3_valueChanged(int)\0"
+    "on_horizontalSlider_4_valueChanged(int)\0"
     "UIupdate()\0on_pushButton_clicked()\0"
     "on_pushButton_2_clicked()\0"
     "on_pushButton_3_clicked()\0arg1\0"
     "on_checkBox_stateChanged(int)\0"
+    "on_checkBox_2_stateChanged(int)\0"
+    "on_checkBox_3_stateChanged(int)\0"
+    "on_checkBox_4_stateChanged(int)\0"
 };
 
 void mainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -69,11 +77,15 @@ void mainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->on_horizontalSlider_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 4: _t->on_horizontalSlider_2_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 5: _t->on_horizontalSlider_3_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 6: _t->UIupdate(); break;
-        case 7: _t->on_pushButton_clicked(); break;
-        case 8: _t->on_pushButton_2_clicked(); break;
-        case 9: _t->on_pushButton_3_clicked(); break;
-        case 10: _t->on_checkBox_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: _t->on_horizontalSlider_4_valueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 7: _t->UIupdate(); break;
+        case 8: _t->on_pushButton_clicked(); break;
+        case 9: _t->on_pushButton_2_clicked(); break;
+        case 10: _t->on_pushButton_3_clicked(); break;
+        case 11: _t->on_checkBox_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 12: _t->on_checkBox_2_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 13: _t->on_checkBox_3_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 14: _t->on_checkBox_4_stateChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -111,9 +123,9 @@ int mainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 15)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 15;
     }
     return _id;
 }

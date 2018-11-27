@@ -24,8 +24,9 @@ public:
     int getSlider1Value();
     int getSlider2Value();
     int getSlider3Value();
+    int getSlider4Value();
     void updateProgressBar(int size, int max);
-    int s1E,s2E,s3E;
+    bool s1E,s2E,s3E, s4E;
 
     ~mainWindow();
 
@@ -42,6 +43,8 @@ private slots:
 
     void on_horizontalSlider_3_valueChanged(int value);
 
+    void on_horizontalSlider_4_valueChanged(int value);
+
     void UIupdate();
 
 
@@ -52,6 +55,14 @@ private slots:
     void on_pushButton_3_clicked();
 
     void on_checkBox_stateChanged(int arg1);
+
+
+
+    void on_checkBox_2_stateChanged(int arg1);
+
+    void on_checkBox_3_stateChanged(int arg1);
+
+    void on_checkBox_4_stateChanged(int arg1);
 
 private:
     Ui::mainWindow *ui;

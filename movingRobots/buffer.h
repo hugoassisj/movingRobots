@@ -20,6 +20,7 @@ class Buffer
         int getSize();
         int getMaxSize();
         void init();
+        Vector2D consult();
 };
 
 #endif // BUFFER_H

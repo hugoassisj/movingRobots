@@ -19,8 +19,6 @@ class Process
         Vector2D checkLine();
         void resetLine(int line);
         bool available();
-
-
 };
 
 #endif // PROCESS_H

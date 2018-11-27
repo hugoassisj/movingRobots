@@ -44,24 +44,29 @@ void *Source_Thread1(void* ptr)
     cout << (char *) ptr << endl;
     while (true)
     {
-        //Source Produz uma nova Posição pra cada Robô
-        new_pos[0].set(s1.produce(r1));
-        b1.putPositions(new_pos[0].get());
-        usleep(rand() % Time);
-        new_pos[1].set(s1.produce(r2));
-        b1.putPositions(new_pos[1].get());
-        usleep(rand() % Time);
-        new_pos[2].set(s1.produce(r3));
-        b1.putPositions(new_pos[2].get());
-        usleep(rand() % Time);
+        if (UIptr->s1E)
+        {
+            //Source Produz uma nova Posição pra cada Robô
+            new_pos[0].set(s1.produce(r1));
+            b1.putPositions(new_pos[0].get());
+            usleep(rand() % Time);
+            new_pos[1].set(s1.produce(r2));
+            b1.putPositions(new_pos[1].get());
+            usleep(rand() % Time);
+            new_pos[2].set(s1.produce(r3));
+            b1.putPositions(new_pos[2].get());
+            usleep(rand() % Time);
 
-        //Mostra essas Novas Posições
-//        cout <<"Source: " << s1.getId() << "  -------------------------------------------------------------------"<< endl;
-//        for (int robot = 0; robot < 3; ++robot)
-//        {
-//            cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
-//        }
-//        cout << endl;
+            //Mostra essas Novas Posições
+//            cout <<"Source: " << s1.getId() << "  -------------------------------------------------------------------"<< endl;
+//            for (int robot = 0; robot < 3; ++robot)
+//            {
+//                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
+//            }
+//            cout << endl;
+        }
+
+
 
         usleep(UIptr->getSlider1Value()*1000);
     }
@@ -78,24 +83,29 @@ void *Source_Thread2(void* ptr)
     cout << (char *) ptr << endl;
     while (true)
     {
-        //Source Produz uma nova Posição pra cada Robô
-        new_pos[0].set(s2.produce(r1));
-        b1.putPositions(new_pos[0].get());
-        usleep(rand() % Time);
-        new_pos[1].set(s2.produce(r2));
-        b1.putPositions(new_pos[1].get());
-        usleep(rand() % Time);
-        new_pos[2].set(s2.produce(r3));
-        b1.putPositions(new_pos[2].get());
-        usleep(rand() % Time);
+        if (UIptr->s2E)
+        {
+            //Source Produz uma nova Posição pra cada Robô
+            new_pos[0].set(s2.produce(r1));
+            b1.putPositions(new_pos[0].get());
+            usleep(rand() % Time);
+            new_pos[1].set(s2.produce(r2));
+            b1.putPositions(new_pos[1].get());
+            usleep(rand() % Time);
+            new_pos[2].set(s2.produce(r3));
+            b1.putPositions(new_pos[2].get());
+            usleep(rand() % Time);
 
-        //Mostra essas Novas Posições
-//        cout <<"Source: " << s2.getId() << "  -------------------------------------------------------------------"<< endl;
-//        for (int robot = 0; robot < 3; ++robot)
-//        {
-//            cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
-//        }
-//        cout << endl;
+            //Mostra essas Novas Posições
+//            cout <<"Source: " << s2.getId() << "  -------------------------------------------------------------------"<< endl;
+//            for (int robot = 0; robot < 3; ++robot)
+//            {
+//                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
+//            }
+//            cout << endl;
+        }
+
+
 
         usleep(UIptr->getSlider2Value()*1000);
     }
@@ -112,44 +122,33 @@ void *Source_Thread3(void* ptr)
     cout << (char *) ptr << endl;
     while (true)
     {
-        //Source Produz uma nova Posição pra cada Robô
-        new_pos[0].set(s3.produce(r1));
-        b1.putPositions(new_pos[0].get());
-        usleep(rand() % Time);
-        new_pos[1].set(s3.produce(r2));
-        b1.putPositions(new_pos[1].get());
-        usleep(rand() % Time);
-        new_pos[2].set(s3.produce(r3));
-        b1.putPositions(new_pos[2].get());
-        usleep(rand() % Time);
+        if (UIptr->s3E)
+        {
+            //Source Produz uma nova Posição pra cada Robô
+            new_pos[0].set(s3.produce(r1));
+            b1.putPositions(new_pos[0].get());
+            usleep(rand() % Time);
+            new_pos[1].set(s3.produce(r2));
+            b1.putPositions(new_pos[1].get());
+            usleep(rand() % Time);
+            new_pos[2].set(s3.produce(r3));
+            b1.putPositions(new_pos[2].get());
+            usleep(rand() % Time);
 
-        //Mostra essas Novas Posições
-//        cout <<"Source: " << s3.getId() << "  -------------------------------------------------------------------"<< endl;
-//        for (int robot = 0; robot < 3; ++robot)
-//        {
-//            cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
-//        }
-//        cout << endl;
+            //Mostra essas Novas Posições
+//            cout <<"Source: " << s3.getId() << "  -------------------------------------------------------------------"<< endl;
+//            for (int robot = 0; robot < 3; ++robot)
+//            {
+//                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
+//            }
+//            cout << endl;
+        }
+
         usleep(UIptr->getSlider3Value()*1000);
     }
 }
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-
-
-
-//Buffer_Thread-------------------------------------------------------------------------------------
-void *Buffer_Thread(void* ptr)
-{
-    cout << (char *) ptr << endl;
-    while (true)
-    {
-        usleep(100000);
-    }
-}
-//--------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------
-
 
 
 
@@ -159,39 +158,40 @@ void *Process_Thread(void* ptr)
     cout << (char *) ptr << endl;
     while (true)
     {
-        Vector2D poss, x, newPos;
-        int r;
-
-        if (p1.available())
+        if (UIptr->s4E)
         {
-            poss = b1.getPositions();
-            x = poss.get();
-            int linha = x.robotID;
-            int coluna = x.sourceID;
+            Vector2D poss, x, newPos;
+            int r;
+            if (p1.available())
+            {
+                poss = b1.getPositions();
+                x = poss.get();
+                int linha = x.robotID;
+                int coluna = x.sourceID;
 
-            int l = p1.filterMatrixPosition(linha);
-            int c = p1.filterMatrixPosition(coluna);
+                int l = p1.filterMatrixPosition(linha);
+                int c = p1.filterMatrixPosition(coluna);
 
-            p1.setProcess(l, c, poss);
-            //p1.display();
-            newPos = p1.checkLine();
-            r = newPos.get().robotID;
-            switch (r) {
-            case 0:
-                r1.setPosition(newPos);
-                break;
-            case 1:
-                r2.setPosition(newPos);
-                break;
-            case 2:
-                r3.setPosition(newPos);
-                break;
-            default:
-                cout << "nao rolou: " << r << endl;
-                break;
+                p1.setProcess(l, c, poss);
+                newPos = p1.checkLine();
+                r = newPos.get().robotID;
+                switch (r) {
+                case 0:
+                    r1.setPosition(newPos);
+                    break;
+                case 1:
+                    r2.setPosition(newPos);
+                    break;
+                case 2:
+                    r3.setPosition(newPos);
+                    break;
+                default:
+                    //cout << "nao rolou: " << r << endl;
+                    break;
+                }
             }
         }
-        usleep(40000);
+        usleep(UIptr->getSlider4Value()*1000);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -216,41 +216,6 @@ int main(int argc, char *argv[])
     w.DefineRobos(&r1, &r2, &r3);
     w.DefineProcess(&p1);
     w.show();
-
-    //---------------------------------------------------------------------------------------------
-    //Cria Threads Buffer
-    //---------------------------------------------------------------------------------------------
-    pthread_t BufferThread;
-    const char *BufferMessage = "Criacao do Buffer Iniciada";
-    int BufferRet;
-    BufferRet = pthread_create( &BufferThread, NULL, Buffer_Thread, (void*) BufferMessage);
-    if(BufferRet)
-    {
-        cout << "Failed to Create Buffer Thread" << endl;
-    }
-    usleep(5000);
-    //---------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------
-
-
-
-
-    //---------------------------------------------------------------------------------------------
-    //Cria Threads Processador
-    //---------------------------------------------------------------------------------------------
-    pthread_t ProcessThread;
-    const char *ProcessMessage = "Criacao do Process Iniciada";
-    int ProcessRet;
-    ProcessRet = pthread_create( &ProcessThread, NULL, Process_Thread, (void*) ProcessMessage);
-    if(ProcessRet)
-    {
-        cout << "Failed to Create Process Thread" << endl;
-    }
-    usleep(5000);
-    //---------------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------------
-
-
 
 
     //---------------------------------------------------------------------------------------------
@@ -285,6 +250,22 @@ int main(int argc, char *argv[])
     {
         cout << "Failed to Create Source Thread 3" << endl;
     }
+    //---------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
+
+
+    //---------------------------------------------------------------------------------------------
+    //Cria Threads Processador
+    //---------------------------------------------------------------------------------------------
+    pthread_t ProcessThread;
+    const char *ProcessMessage = "Criacao do Process Iniciada";
+    int ProcessRet;
+    ProcessRet = pthread_create( &ProcessThread, NULL, Process_Thread, (void*) ProcessMessage);
+    if(ProcessRet)
+    {
+        cout << "Failed to Create Process Thread" << endl;
+    }
+    usleep(5000);
     //---------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------
 

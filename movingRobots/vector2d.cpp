@@ -15,10 +15,10 @@ Vector2D::Vector2D()
 {
     mutex1 = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock( &mutex1 );
-    this->x = -1;
-    this->y = -1;
-    this->sourceID = -1;
-    this->robotID = -1;
+    this->x = 999;
+    this->y = 999;
+    this->sourceID = 999;
+    this->robotID = 999;
     pthread_mutex_unlock( &mutex1 );
 }
 

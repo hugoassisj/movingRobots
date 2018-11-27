@@ -50,13 +50,6 @@ void Buffer::init()
 
 void Buffer::putPositions(Vector2D pos)
 {
-    //    cout << endl;
-    //    cout << "Inserido: " <<  endl;
-    //    for (int robot = 0; robot < 3; ++robot)
-    //    {
-    //        cout << "Robot: " << robot + 1 << " |X: " << new_pos[robot].x << " |Y: " << new_pos[robot].y << " |SourceID: " << new_pos[robot].sourceID + 1 << " |RobotID: " << new_pos[robot].robotID + 1 <<endl;
-    //    }
-    //    cout << endl;
     int bs;
     pthread_mutex_lock( &mutex1 );
     bs = buffer.size();
@@ -85,8 +78,22 @@ Vector2D Buffer::getPositions()
         pthread_mutex_lock( &mutex1 );
         buffer.pop_front();
         pthread_mutex_unlock( &mutex1 );
-        //cout << endl;
-        //cout << "Removido: " << " X: " << element.x << " Y: " << element.y << " |SourceID: " << element.sourceID << " |RobotID: " << element.robotID + 1 << endl;
+        return element;
+    }
+}
+
+Vector2D Buffer::consult()
+{
+    int bs;
+    pthread_mutex_lock( &mutex1 );
+    bs = buffer.size();
+    pthread_mutex_unlock( &mutex1 );
+    if (bs > 0)
+    {
+        Vector2D element;
+        pthread_mutex_lock( &mutex1 );
+        element = buffer.front();
+        pthread_mutex_unlock( &mutex1 );
         return element;
     }
 }
