@@ -1,5 +1,5 @@
 [![HitCount](http://hits.dwyl.io/hugoassisj/movingRobots.svg)](http://hits.dwyl.io/hugoassisj/movingRobots)
-![Downloads](https://img.shields.io/github/downloads/hugoassisj/movingRobots/total.svg?style=flat-square)
+
 # movingRobots
 
 Threads concurrency and synchronization example, written in C++ using Qt.
