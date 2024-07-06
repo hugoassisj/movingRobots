@@ -1,13 +1,15 @@
-#include "mainwindow.h"
 #include <QApplication>
-#include <pthread.h>
 #include <QThread>
-#include <iostream>
+#include <pthread.h>
 #include <unistd.h>
-#include "robot.h"
-#include "buffer.h"
-#include "source.h"
-#include "process.h"
+#include <iostream>
+
+#include "mainWindow/mainwindow.h"
+#include "Robot/robot.h"
+#include "Buffer/buffer.h"
+#include "Source/source.h"
+#include "Processor/processor.h"
+
 
 #define BUFFER_SIZE 300
 
@@ -63,15 +65,15 @@ void *Source_Thread1(void* ptr)
             }
 
             //Mostra essas Novas Posições
-//            cout <<"Source: " << s1.getId() << "  -------------------------------------------------------------------"<< endl;
-//            for (int robot = 0; robot < 3; ++robot)
-//            {
-//                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
-//            }
-//            cout << endl;
+            //            cout <<"Source: " << s1.getId() << "  -------------------------------------------------------------------"<< endl;
+            //            for (int robot = 0; robot < 3; ++robot)
+            //            {
+            //                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
+            //            }
+            //            cout << endl;
         }
 
-    usleep(UIptr->getSlider1Value()*1000);
+        usleep(UIptr->getSlider1Value()*1000);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -97,14 +99,14 @@ void *Source_Thread2(void* ptr)
             }
 
             //Mostra essas Novas Posições
-//            cout <<"Source: " << s2.getId() << "  -------------------------------------------------------------------"<< endl;
-//            for (int robot = 0; robot < 3; ++robot)
-//            {
-//                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
-//            }
-//            cout << endl;
+            //            cout <<"Source: " << s2.getId() << "  -------------------------------------------------------------------"<< endl;
+            //            for (int robot = 0; robot < 3; ++robot)
+            //            {
+            //                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
+            //            }
+            //            cout << endl;
         }
-    usleep(UIptr->getSlider2Value()*1000);
+        usleep(UIptr->getSlider2Value()*1000);
     }
 }
 //--------------------------------------------------------------------------------------------------
@@ -130,12 +132,12 @@ void *Source_Thread3(void* ptr)
             }
 
             //Mostra essas Novas Posições
-//            cout <<"Source: " << s3.getId() << "  -------------------------------------------------------------------"<< endl;
-//            for (int robot = 0; robot < 3; ++robot)
-//            {
-//                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
-//            }
-//            cout << endl;
+            //            cout <<"Source: " << s3.getId() << "  -------------------------------------------------------------------"<< endl;
+            //            for (int robot = 0; robot < 3; ++robot)
+            //            {
+            //                cout << "Robot: " << robot << "|X: " << new_pos[robot].get().x << "\t|Y: " << new_pos[robot].get().y << "\t|SourceID: " << new_pos[robot].get().sourceID << "\t|RobotID: " << new_pos[robot].get().robotID <<endl;
+            //            }
+            //            cout << endl;
         }
         usleep(UIptr->getSlider3Value()*1000);
     }
@@ -153,6 +155,7 @@ void *Process_Thread(void* ptr)
     {
         if (UIptr->s4E)
         {
+            b1.display();
             Vector2D poss, x, newPos;
             int r;
             if (p1.available())

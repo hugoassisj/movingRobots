@@ -1,30 +1,36 @@
 #-------------------------------------------------
-#
-# Project created by QtCreator 2018-11-19T14:40:12
-#
+# Project created by QtCreator 2024-03-09T12:00:00
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui widgets
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+CONFIG += c++17
 
-TARGET = movingRobots
-TEMPLATE = app
+# Uncomment this line to disable deprecated APIs before Qt 6.0.0
+# DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
+# Define your sources and headers
+SOURCES += \
+    main.cpp \
+    mainWindow/mainwindow.cpp \
+    Buffer/buffer.cpp \
+    Processor/processor.cpp \
+    Robot/robot.cpp \
+    Source/source.cpp \
+    Vector2D/vector2d.cpp
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-        robot.cpp \
-    source.cpp \
-    buffer.cpp \
-    vector2d.cpp \
-    process.cpp
+HEADERS += \
+    mainWindow/mainwindow.h \
+    Buffer/buffer.h \
+    Processor/processor.h \
+    Robot/robot.h \
+    Source/source.h \
+    Vector2D/vector2d.h
 
-HEADERS  += mainwindow.h \
-    robot.h \
-    source.h \
-    buffer.h \
-    vector2d.h \
-    process.h
+FORMS += \
+    mainWindow/mainwindow.ui
 
-FORMS    += mainwindow.ui
+# Default rules for deployment
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
