@@ -7,6 +7,9 @@
  *
  * Centralises values that were previously duplicated in robot.cpp,
  * source.h, processor.cpp, and backendcontroller.h so they stay in sync.
+ *
+ * Threading: all values are compile-time constants (constexpr), so they
+ * are inherently safe to read from any thread without synchronization.
  */
 
 namespace Constants {

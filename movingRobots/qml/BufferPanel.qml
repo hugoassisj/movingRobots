@@ -1,83 +1,119 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Universal
 import QtQuick.Layouts
 
 /**
- * BufferPanel — Shows the shared buffer fill level and provides action buttons.
- *
- * Fully responsive — uses Layout.fillWidth and proportional spacing
- * with no hardcoded pixel dimensions.
+ * BufferPanel -- completely restyled as a modern status card.
+ * Custom progress bar and buttons replace default OS components.
  */
-GroupBox {
+Rectangle {
     id: bufferPanel
-    title: "Shared Buffer"
+    
+    implicitHeight: bufferContent.implicitHeight + Theme.contentSpacing * 2
+    color: Theme.bgCard
+    radius: Theme.radiusCard
+    border.color: Theme.border
+    border.width: 1
 
-    ToolTip.visible: bufferGroupHover.hovered
+    ToolTip.visible: bufferCardHover.hovered
     ToolTip.text: "The bounded producer-consumer buffer shared between source and processor threads"
     ToolTip.delay: 800
 
-    HoverHandler { id: bufferGroupHover }
+    HoverHandler { id: bufferCardHover }
 
     ColumnLayout {
+        id: bufferContent
         anchors.fill: parent
-        spacing: parent.height * 0.06
+        anchors.margins: Theme.contentSpacing
+        spacing: Theme.contentSpacing
 
-        // --- Buffer usage text ---
+        // --- Header ---
         RowLayout {
             Layout.fillWidth: true
-
             Label {
-                text: "Items: <b>" + backend.bufferSize + "</b> / " + backend.bufferMaxSize
-                textFormat: Text.RichText
+                text: "Shared Pipeline Buffer"
+                font.pixelSize: Theme.fontSectionTitle
+                font.weight: Font.DemiBold
+                color: Theme.textPrimary
             }
-
             Item { Layout.fillWidth: true }
-
             Label {
-                text: {
-                    var pct = backend.bufferMaxSize > 0
-                        ? Math.round(100 * backend.bufferSize / backend.bufferMaxSize)
-                        : 0
-                    return pct + "% full"
-                }
-                color: {
-                    var pct = backend.bufferMaxSize > 0
-                        ? (100 * backend.bufferSize / backend.bufferMaxSize)
-                        : 0
-                    if (pct > 80) return "#F44336"
-                    if (pct > 50) return "#FF9800"
-                    return Universal.foreground
-                }
-                font.bold: true
+                text: backend.bufferSize + " / " + backend.bufferMaxSize
+                font.pixelSize: Theme.fontBody
+                font.weight: Font.Bold
+                color: Theme.actionMain
             }
         }
 
-        // --- Progress bar ---
+        // --- Custom Progress Bar ---
         ProgressBar {
-            Layout.fillWidth: true
-            from: 0
-            to: backend.bufferMaxSize
+            id: bufferProgress
             value: backend.bufferSize
+            to: backend.bufferMaxSize
+            Layout.fillWidth: true
+            Layout.preferredHeight: 12
 
             ToolTip.visible: progressHover.hovered
             ToolTip.text: backend.bufferSize + " of " + backend.bufferMaxSize + " slots used"
             ToolTip.delay: 500
 
             HoverHandler { id: progressHover }
+            
+            background: Rectangle {
+                implicitHeight: 12
+                color: Theme.bgApp
+                radius: height / 2
+            }
+            contentItem: Item {
+                implicitHeight: 12
+                Rectangle {
+                    width: bufferProgress.visualPosition * parent.width
+                    height: parent.height
+                    radius: height / 2
+                    color: {
+                        var ratio = bufferProgress.to > 0 ? bufferProgress.value / bufferProgress.to : 0
+                        if (ratio >= 0.9) return "#EF4444" // Red if nearly full
+                        if (ratio >= 0.7) return "#F59E0B" // Orange if getting full
+                        return Theme.actionMain // Default
+                    }
+                    
+                    Behavior on width { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+                }
+            }
         }
 
-        // --- Action buttons + selected robot ---
+        // --- Actions ---
         RowLayout {
             Layout.fillWidth: true
+            spacing: Theme.contentSpacing
+            Layout.topMargin: Theme.unit
+
+            // Custom Button Styling Component
+            Component {
+                id: customBtnStyle
+                Rectangle {
+                    implicitHeight: 36
+                    implicitWidth: 120
+                    radius: Theme.radiusControl
+                }
+            }
 
             Button {
                 text: "Remove Item"
                 onClicked: backend.manualRemove()
 
                 ToolTip.visible: hovered
-                ToolTip.text: "Manually take one item from the buffer, process it, and update the robot position"
+                ToolTip.text: "Manually take one item from the buffer and process it"
                 ToolTip.delay: 500
+
+                background: Rectangle {
+                    implicitHeight: 36; implicitWidth: 120; radius: Theme.radiusControl
+                    color: parent.down ? Theme.actionHover : Theme.actionMain
+                }
+                contentItem: Text {
+                    text: parent.text; color: Theme.btnTextOnAction
+                    font.weight: Font.Medium; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                }
             }
 
             Button {
@@ -85,27 +121,21 @@ GroupBox {
                 onClicked: backend.printState()
 
                 ToolTip.visible: hovered
-                ToolTip.text: "Print the current buffer contents and processor matrix to the console (stdout)"
+                ToolTip.text: "Print buffer contents and processor matrix to console"
                 ToolTip.delay: 500
+
+                background: Rectangle {
+                    implicitHeight: 36; implicitWidth: 120; radius: Theme.radiusControl
+                    color: parent.down ? Theme.actionMutedH : Theme.actionMuted
+                    border.color: Theme.border
+                }
+                contentItem: Text {
+                    text: parent.text; color: Theme.textPrimary
+                    font.weight: Font.Medium; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                }
             }
 
             Item { Layout.fillWidth: true }
-
-            Label {
-                text: "Selected: <b>Robot " + (backend.selectedRobot + 1) + "</b>"
-                textFormat: Text.RichText
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                color: {
-                    var colors = ["#2196F3", "#4CAF50", "#FF9800"]
-                    return colors[backend.selectedRobot] || Universal.foreground
-                }
-
-                ToolTip.visible: selHover.hovered
-                ToolTip.text: "Use arrow keys to move the selected robot. Click a robot on the grid to select it."
-                ToolTip.delay: 500
-
-                HoverHandler { id: selHover }
-            }
         }
     }
 }

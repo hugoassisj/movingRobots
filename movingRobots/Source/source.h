@@ -9,6 +9,17 @@
 /**
  * @file source.h
  * @brief Position-sensing source (e.g., IMU, GPS, Odometry).
+ *
+ * Each Source instance runs exclusively on its own dedicated worker thread
+ * (launched by BackendController::sourceWorker). It produces position
+ * readings by reading a Robot's current position and applying a random
+ * perturbation.
+ *
+ * Threading: Source objects are NOT thread-safe: they must only be
+ * accessed from their owning worker thread. The per-instance RNG
+ * eliminates any shared mutable state between source threads.
+ * The only cross-thread interaction is the call to Robot::getPosition(),
+ * which is itself mutex-protected.
  */
 
 /**
@@ -37,10 +48,10 @@ public:
      * each axis, clamps to room boundaries, and tags the result with
      * this source's ID and the robot's ID.
      *
-     * @param robot Reference to the target robot (read-only access).
+     * @param robot Const reference to the target robot (read-only access).
      * @return Newly computed position with metadata.
      */
-    Vector2D produce(Robot& robot);
+    Vector2D produce(const Robot& robot);
 
     /**
      * @brief Clamps a position to the valid room boundaries.

@@ -6,6 +6,15 @@
 /**
  * @file vector2d.h
  * @brief Lightweight 2D position with source and robot metadata.
+ *
+ * Vector2D is the primary data type exchanged between threads in this
+ * application. It flows from Source threads into the Buffer, out to the
+ * Processor thread, and finally into Robot objects read by the GUI thread.
+ *
+ * Threading: Vector2D is a value type with no internal synchronization.
+ * Thread safety is the responsibility of the container or owner (Buffer,
+ * Processor, Robot). It is always passed by value or by const reference
+ * to avoid shared mutable state.
  */
 
 /**
@@ -13,7 +22,7 @@
  *
  * This is a plain value type (POD-like) designed to be freely copied, stored
  * in containers, and passed by value. It intentionally has NO internal
- * synchronization — thread safety must be ensured by the owner or container
+ * synchronization: thread safety must be ensured by the owner or container
  * (e.g., Buffer, Processor, Robot).
  *
  * The @c sourceId and @c robotId fields identify which source produced
@@ -28,7 +37,7 @@ struct Vector2D {
     /// Sentinel value indicating an unassigned source or robot ID.
     static constexpr int INVALID_ID = -1;
 
-    /// Default constructor — zero position, invalid IDs.
+    /// Default constructor: zero position, invalid IDs.
     Vector2D() = default;
 
     /**

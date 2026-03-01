@@ -13,7 +13,7 @@ Three simulated position sources (IMU, GPS, Odometry) run on independent threads
 
 ## Architecture
 
-![Architecture](architecture.png)
+![Architecture](/movingRobots/resources/architecture.png)
 
 | Component             | Role                                                                                                                    |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -25,13 +25,14 @@ Three simulated position sources (IMU, GPS, Odometry) run on independent threads
 
 ## Features
 
-![Application screenshot](ui.png)
+![Application screenshot](/movingRobots/resources/ui.png)
 
-- **Real-time grid visualization** with smooth animations (4 : 3 aspect ratio, fully responsive).
-- **Per-thread controls**: enable/disable each source or the processor, adjust delays (100 – 4 000 ms).
-- **Keyboard control**: select a robot and move it with arrow keys (toroidal wrap-around).
-- **Buffer monitor**: live progress bar with color-coded fill percentage.
-- **Manual mode**: remove a single item from the buffer and observe the processor state in the console.
+- **Card-based dashboard** with dark / light theme toggle.
+- **Live arena**: 4 : 3 grid with smooth animations and click-to-select robots.
+- **Live coordinates**: real-time X / Y readouts for every robot.
+- **Thread controls**: enable / disable each source or the processor and adjust delays.
+- **Keyboard control**: move the selected robot with arrow keys.
+- **Buffer monitor**: color-coded progress bar with manual remove and print-state actions.
 
 ## Prerequisites
 

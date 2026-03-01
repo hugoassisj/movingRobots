@@ -9,6 +9,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
+qt_policy(SET QTP0004 NEW)
+
 qt_add_executable(movingRobots
     main.cpp
     constants.h
@@ -26,10 +28,18 @@ qt_add_executable(movingRobots
     BackendController/backendcontroller.cpp
 )
 
+# Embed the application icon into the Qt resource system.
+qt_add_resources(movingRobots "app_resources"
+    FILES resources/app_icon.png
+)
+
+set_source_files_properties(qml/Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_qml_module(movingRobots
     URI MovingRobots
     VERSION 1.0
     QML_FILES
+        qml/Theme.qml
         qml/Main.qml
         qml/RobotGrid.qml
         qml/ControlPanel.qml

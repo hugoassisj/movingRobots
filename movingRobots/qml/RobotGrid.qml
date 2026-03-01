@@ -1,100 +1,110 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Universal
 
 /**
- * RobotGrid — responsive playing field with grid lines and robot markers.
- *
- * Maintains a 4:3 aspect ratio within whatever size the parent gives it.
- * Grid step and robot marker sizes scale proportionally.
+ * RobotGrid -- Modern card-style grid with square robots (rounded corners)
+ * and hover tooltips. Maintains 4:3 aspect ratio.
  */
 Item {
     id: gridRoot
 
-    // Logical grid dimensions (driven by backend constants, not duplicated).
     readonly property int logicalWidth:  backend.roomWidth
     readonly property int logicalHeight: backend.roomHeight
     readonly property int logicalStep:   backend.gridStep
 
-    // Scale factors: map logical coordinates → actual rendered pixels.
+    // Scale factors: map logical coords to rendered pixels
     readonly property real scaleX: arena.width  / logicalWidth
     readonly property real scaleY: arena.height / logicalHeight
 
-    // Derived visual sizes.
+    // Cell size derived from the arena, not the parent
     readonly property real cellSize: Math.min(arena.width / (logicalWidth / logicalStep),
                                               arena.height / (logicalHeight / logicalStep))
 
-    // Item that should receive focus when a robot is clicked (set by parent).
-    property Item focusTarget
+    property Item focusTarget: null
 
-    readonly property var robotColors: ["#2196F3", "#4CAF50", "#FF9800"]
-
-    // Arena rectangle — centered, maintains 4:3 aspect ratio.
+    // Arena -- centered, maintains 4:3 aspect ratio, with visible border
     Rectangle {
         id: arena
 
-        readonly property real aspectRatio: 4.0 / 3.0
+        readonly property real aspectRatio: logicalWidth / logicalHeight
 
         width:  Math.min(parent.width, parent.height * aspectRatio)
         height: width / aspectRatio
         anchors.centerIn: parent
 
         color: "transparent"
-        border.color: Universal.foreground
-        border.width: Math.max(1, Math.round(arena.width * 0.005))
+        border.color: Theme.border
+        border.width: 1
+        radius: 4
 
-        // --- Horizontal grid lines ---
-        Repeater {
-            model: (logicalHeight / logicalStep) - 1
-            Rectangle {
-                x: 0
-                y: (index + 1) * gridRoot.scaleY * logicalStep
-                width: arena.width
-                height: 1
-                color: Qt.rgba(0.5, 0.5, 0.5, 0.3)
-            }
-        }
-
-        // --- Vertical grid lines ---
+        // --- Soft Grid Lines ---
         Repeater {
             model: (logicalWidth / logicalStep) - 1
             Rectangle {
                 x: (index + 1) * gridRoot.scaleX * logicalStep
                 y: 0
-                width: 1
-                height: arena.height
-                color: Qt.rgba(0.5, 0.5, 0.5, 0.3)
+                width: 1; height: arena.height
+                color: Theme.border
+            }
+        }
+        Repeater {
+            model: (logicalHeight / logicalStep) - 1
+            Rectangle {
+                x: 0
+                y: (index + 1) * gridRoot.scaleY * logicalStep
+                width: arena.width; height: 1
+                color: Theme.border
             }
         }
 
-        // --- Robot markers ---
+        // --- Square Robots (rounded corners) ---
         Repeater {
             model: backend.robots
 
             Rectangle {
-                id: robotMarker
+                id: botRect
 
-                required property var modelData
-                required property int index
-
+                // Top-left positioning (grid-cell aligned)
                 x: modelData.posX * gridRoot.scaleX
                 y: modelData.posY * gridRoot.scaleY
-                width: gridRoot.cellSize
+
+                width:  gridRoot.cellSize
                 height: gridRoot.cellSize
-                radius: gridRoot.cellSize * 0.2
-                color: robotColors[index]
+                radius: gridRoot.cellSize * 0.2   // rounded corners, not circle
+
+                color: Theme.robotColors.length > 0
+                       ? Theme.robotColors[index % Theme.robotColors.length]
+                       : "gray"
+
+                // Selection ring
                 border.color: backend.selectedRobot === index ? "white" : "transparent"
                 border.width: backend.selectedRobot === index
-                              ? Math.max(2, gridRoot.cellSize * 0.15) : 0
+                              ? Math.max(2, gridRoot.cellSize * 0.12) : 0
 
+                // Smooth position animation
                 Behavior on x { NumberAnimation { duration: 80; easing.type: Easing.OutQuad } }
                 Behavior on y { NumberAnimation { duration: 80; easing.type: Easing.OutQuad } }
+
+                // Outer glow ring when selected
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width + 8
+                    height: parent.height + 8
+                    radius: parent.radius + 4
+                    color: "transparent"
+                    border.color: Theme.robotColors.length > 0
+                                   ? Theme.robotColors[index % Theme.robotColors.length]
+                                   : "gray"
+                    border.width: 2
+                    visible: backend.selectedRobot === index
+                    opacity: 0.5
+                }
 
                 Text {
                     anchors.centerIn: parent
                     text: (index + 1).toString()
-                    color: "white"
-                    font.bold: true
+                    color: "#FFFFFF"
+                    font.weight: Font.Bold
                     font.pixelSize: Math.max(8, gridRoot.cellSize * 0.55)
                 }
 
@@ -109,7 +119,7 @@ Item {
                 }
 
                 ToolTip.visible: hoverHandler.hovered
-                ToolTip.text: "Robot " + (index + 1) + " — Click to select for keyboard control"
+                ToolTip.text: "Robot " + (index + 1) + " — Click to select, then use arrow keys"
                 ToolTip.delay: 500
 
                 HoverHandler { id: hoverHandler }

@@ -1,11 +1,17 @@
 /**
  * @file processor.cpp
  * @brief Implementation of the Processor accumulation and averaging logic.
+ *
+ * Threading: insertAndProcess() is the hot path, called once per buffer
+ * item consumed. The mutex is held for the duration of the insert +
+ * check + optional mean computation, keeping the critical section short
+ * but atomic: no partial state is ever visible to another thread.
  */
 
 #include "processor.h"
 #include "../constants.h"
 
+#include <cassert>
 #include <sstream>
 #include <iostream>
 #include <cmath>
@@ -44,6 +50,8 @@ bool Processor::insertAndProcess(const Vector2D& position, Vector2D& meanPositio
 
 std::optional<Vector2D> Processor::tryComputeMean(int robotId)
 {
+    assert(robotId >= 0 && robotId < NUM_ROBOTS && "robotId out of range");
+
     // Verify every source has reported.
     for (int sourceIndex = 0; sourceIndex < NUM_SOURCES; ++sourceIndex) {
         if (!matrix_[robotId][sourceIndex].filled) {
@@ -63,6 +71,8 @@ std::optional<Vector2D> Processor::tryComputeMean(int robotId)
     int meanY = sumY / NUM_SOURCES;
 
     // Snap to the nearest grid cell so robots stay aligned.
+    // Without snapping, the integer division of the mean would
+    // cause subtle off-grid drift over time.
     constexpr int G = Constants::GRID_STEP;
     int snappedX = static_cast<int>(std::round(static_cast<double>(meanX) / G)) * G;
     int snappedY = static_cast<int>(std::round(static_cast<double>(meanY) / G)) * G;
@@ -77,6 +87,8 @@ std::optional<Vector2D> Processor::tryComputeMean(int robotId)
 
 void Processor::resetRow(int robotId)
 {
+    assert(robotId >= 0 && robotId < NUM_ROBOTS && "robotId out of range");
+
     for (int sourceIndex = 0; sourceIndex < NUM_SOURCES; ++sourceIndex) {
         matrix_[robotId][sourceIndex] = Entry{};
     }

@@ -1,6 +1,10 @@
 /**
  * @file source.cpp
  * @brief Implementation of the Source position-sensing simulator.
+ *
+ * Threading: all methods are called from the owning source worker thread.
+ * No internal synchronization is required because each Source instance is
+ * exclusively owned by a single thread.
  */
 
 #include "source.h"
@@ -8,6 +12,9 @@
 
 Source::Source(int id)
     : id_(id), rng_(std::random_device{}())
+    // Each Source gets its own Mersenne Twister seeded independently.
+    // This avoids sharing a global RNG across threads, which would
+    // require locking and harm performance.
 {}
 
 void Source::saturate(Vector2D& position, int roomWidth, int roomHeight)
@@ -24,12 +31,15 @@ void Source::saturate(Vector2D& position, int roomWidth, int roomHeight)
     else if (position.y > roomHeight - G) position.y = roomHeight - G;
 }
 
-Vector2D Source::produce(Robot& robot)
+Vector2D Source::produce(const Robot& robot)
 {
     // Pick one random cardinal direction (up / down / left / right)
     // so the robot moves to exactly one adjacent cell per reading.
     std::uniform_int_distribution<int> direction(0, 3);
 
+    // Robot::getPosition() is mutex-protected, making this the only
+    // cross-thread synchronization point in Source. The returned
+    // Vector2D is a value copy, so no lock is held after return.
     Vector2D currentPosition = robot.getPosition();
 
     Vector2D newPosition = currentPosition;

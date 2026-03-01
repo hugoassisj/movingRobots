@@ -11,6 +11,16 @@
 /**
  * @file processor.h
  * @brief Accumulates position readings and computes per-robot averages.
+ *
+ * The Processor acts as the consumer side of the producer-consumer
+ * pipeline. It collects one reading per source for each robot, then
+ * averages them to produce a fused position estimate.
+ *
+ * Threading: the Processor is primarily accessed from the processor
+ * worker thread (via insertAndProcess), but may also be called from
+ * the GUI thread during manual buffer removal (BackendController::
+ * manualRemove). A std::mutex serializes all access. The GUI thread
+ * also calls toString() for debug output.
  */
 
 /**
@@ -22,8 +32,16 @@
  * computes the arithmetic mean of the recorded positions, returns it, and
  * resets the row for the next cycle.
  *
+ * This design implements a simple sensor-fusion strategy: each source provides
+ * a noisy estimate, and averaging reduces the variance by a factor of
+ * 1/NUM_SOURCES (assuming independent noise).
+ *
  * All public operations are protected by a single mutex so that the processor
  * thread and the GUI thread can both call into this class safely.
+ *
+ * Ownership: Processor is a value member of BackendController. It is not
+ * a QObject and has no thread affinity: thread safety comes entirely
+ * from the internal mutex.
  */
 class Processor {
 public:

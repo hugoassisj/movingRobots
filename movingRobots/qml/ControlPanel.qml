@@ -1,226 +1,353 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Controls.Universal
 import QtQuick.Layouts
 
 /**
- * ControlPanel — Displays robot positions and thread timing controls.
- *
- * Fully responsive — all columns use Layout.fillWidth with proportional
- * ratios instead of hardcoded pixel widths.
+ * ControlPanel -- Split into clean, individual cards.
+ * Data presentation is improved using "pills" for coordinates.
  */
 Item {
     id: controlRoot
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: parent.height * 0.015
+        spacing: Theme.sectionSpacing
 
         // =================================================================
-        // Robot Positions Group
+        // Card 1: Live Coordinates
         // =================================================================
-        GroupBox {
-            title: "Robot Positions"
+        Rectangle {
             Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumHeight: 190
+            color: Theme.bgCard
+            radius: Theme.radiusCard
+            border.color: Theme.border
+            border.width: 1
 
-            ToolTip.visible: posGroupHover.hovered
+            ToolTip.visible: coordsHover.hovered
             ToolTip.text: "Live X/Y coordinates of each robot on the grid"
             ToolTip.delay: 800
 
-            HoverHandler { id: posGroupHover }
+            HoverHandler { id: coordsHover }
 
-            GridLayout {
-                columns: 3
-                columnSpacing: parent.width * 0.04
-                rowSpacing: parent.height * 0.02
-                anchors.left: parent.left
-                anchors.right: parent.right
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Theme.contentSpacing
+                spacing: 4
 
-                // Header row
-                Label { text: "Robot"; font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 2 }
-                Label { text: "Col"; font.bold: true; horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
-                Label { text: "Row"; font.bold: true; horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
+                Label {
+                    text: "Live Coordinates"
+                    font.pixelSize: Theme.fontSectionTitle
+                    font.weight: Font.DemiBold
+                    color: Theme.textPrimary
+                }
 
-                // Robot 1
-                Label { text: "Robot 1"; color: "#2196F3"; font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 2 }
-                Label { text: Math.floor(backend.robots[0].posX / backend.gridStep); horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
-                Label { text: Math.floor(backend.robots[0].posY / backend.gridStep); horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
+                // Header Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    Label { text: "Unit"; font.pixelSize: Theme.fontMeta; color: Theme.textSecondary; font.weight: Font.Medium; Layout.preferredWidth: 60 }
+                    Label { text: "X-Axis"; font.pixelSize: Theme.fontMeta; color: Theme.textSecondary; font.weight: Font.Medium; Layout.fillWidth: true }
+                    Label { text: "Y-Axis"; font.pixelSize: Theme.fontMeta; color: Theme.textSecondary; font.weight: Font.Medium; Layout.fillWidth: true }
+                }
 
-                // Robot 2
-                Label { text: "Robot 2"; color: "#4CAF50"; font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 2 }
-                Label { text: Math.floor(backend.robots[1].posX / backend.gridStep); horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
-                Label { text: Math.floor(backend.robots[1].posY / backend.gridStep); horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
+                Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
 
-                // Robot 3
-                Label { text: "Robot 3"; color: "#FF9800"; font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 2 }
-                Label { text: Math.floor(backend.robots[2].posX / backend.gridStep); horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
-                Label { text: Math.floor(backend.robots[2].posY / backend.gridStep); horizontalAlignment: Text.AlignHCenter; Layout.fillWidth: true; Layout.preferredWidth: 1 }
+                // Dynamic Rows
+                Repeater {
+                    model: backend.robots
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        
+                        // Robot Dot + Name
+                        RowLayout {
+                            Layout.preferredWidth: 60
+                            spacing: Theme.unit
+                            Rectangle {
+                                width: 10; height: 10; radius: 5
+                                color: Theme.robotColors.length > 0
+                                       ? Theme.robotColors[index % Theme.robotColors.length]
+                                       : "gray"
+                            }
+                            Label {
+                                text: "R" + (index + 1)
+                                font.pixelSize: Theme.fontBody
+                                font.weight: Font.Medium
+                                color: Theme.textPrimary
+                            }
+                        }
+
+                        // X Coordinate Pill
+                        Rectangle {
+                            Layout.fillWidth: true; Layout.preferredHeight: 28
+                            color: Theme.bgApp; radius: Theme.radiusControl
+                            Label {
+                                anchors.centerIn: parent
+                                text: Math.round(modelData.posX)
+                                font.pixelSize: Theme.fontBody
+                                color: Theme.textPrimary
+                            }
+                        }
+
+                        // Y Coordinate Pill
+                        Rectangle {
+                            Layout.fillWidth: true; Layout.preferredHeight: 28
+                            color: Theme.bgApp; radius: Theme.radiusControl
+                            Label {
+                                anchors.centerIn: parent
+                                text: Math.round(modelData.posY)
+                                font.pixelSize: Theme.fontBody
+                                color: Theme.textPrimary
+                            }
+                        }
+                    }
+                }
             }
         }
 
         // =================================================================
-        // Thread Timing Group
+        // Card 2: Thread Controls
         // =================================================================
-        GroupBox {
-            title: "Thread Timing"
+        Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.minimumHeight: 200
+            color: Theme.bgCard
+            radius: Theme.radiusCard
+            border.color: Theme.border
+            border.width: 1
 
-            GridLayout {
-                columns: 4
-                columnSpacing: parent.width * 0.02
-                rowSpacing: parent.height * 0.01
-                anchors.left: parent.left
-                anchors.right: parent.right
+            ToolTip.visible: threadCardHover.hovered
+            ToolTip.text: "Configure source and processor threads"
+            ToolTip.delay: 800
 
-                // Header row — proportional column widths via preferredWidth ratios
-                Label { text: "Thread";    font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 2 }
-                Label { text: "Enabled";   font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 1; horizontalAlignment: Text.AlignHCenter }
-                Label { text: "Delay (ms)"; font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 4; horizontalAlignment: Text.AlignHCenter }
-                Label { text: "Value";     font.bold: true; Layout.fillWidth: true; Layout.preferredWidth: 2; horizontalAlignment: Text.AlignRight }
+            HoverHandler { id: threadCardHover }
 
-                // --- Source 1 ---
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Theme.contentSpacing
+                spacing: Theme.itemSpacing
+
                 Label {
-                    text: "Source 1"; color: "#2196F3"; font.bold: true
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
-
-                    ToolTip.visible: s1LabelHover.hovered
-                    ToolTip.text: "IMU sensor — produces noisy position readings for all robots"
-                    ToolTip.delay: 500
-                    HoverHandler { id: s1LabelHover }
-                }
-                CheckBox {
-                    checked: backend.source0Enabled
-                    onToggled: backend.source0Enabled = checked
-                    Layout.fillWidth: true; Layout.preferredWidth: 1
-                    Layout.alignment: Qt.AlignHCenter
-
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Enable or disable Source 1 (IMU) thread"
-                    ToolTip.delay: 500
-                }
-                Slider {
-                    from: 100; to: 4000; stepSize: 100
-                    value: backend.source0Delay
-                    onMoved: backend.source0Delay = value
-                    Layout.fillWidth: true; Layout.preferredWidth: 4
-
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Delay between capture cycles for Source 1 (ms)"
-                    ToolTip.delay: 500
-                }
-                Label {
-                    text: backend.source0Delay + " ms"
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
+                    text: "Thread Configuration"
+                    font.pixelSize: Theme.fontSectionTitle
+                    font.weight: Font.DemiBold
+                    color: Theme.textPrimary
+                    Layout.bottomMargin: Theme.unit
                 }
 
-                // --- Source 2 ---
-                Label {
-                    text: "Source 2"; color: "#4CAF50"; font.bold: true
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
+                // ---- Reusable themed switch ----
+                Component {
+                    id: themedSwitch
+                    Switch {
+                        id: sw
+                        font.pixelSize: Theme.fontBody
+                        font.weight: Font.Medium
+                        Layout.preferredWidth: 130
 
-                    ToolTip.visible: s2LabelHover.hovered
-                    ToolTip.text: "GPS sensor — produces noisy position readings for all robots"
-                    ToolTip.delay: 500
-                    HoverHandler { id: s2LabelHover }
-                }
-                CheckBox {
-                    checked: backend.source1Enabled
-                    onToggled: backend.source1Enabled = checked
-                    Layout.fillWidth: true; Layout.preferredWidth: 1
-                    Layout.alignment: Qt.AlignHCenter
+                        indicator: Rectangle {
+                            implicitWidth: 40; implicitHeight: 22
+                            x: sw.leftPadding
+                            y: parent.height / 2 - height / 2
+                            radius: height / 2
+                            color: sw.checked ? Theme.switchTrackOn : Theme.switchTrackOff
+                            border.color: sw.checked ? Theme.switchTrackOn : Theme.border
+                            border.width: 1
 
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Enable or disable Source 2 (GPS) thread"
-                    ToolTip.delay: 500
-                }
-                Slider {
-                    from: 100; to: 4000; stepSize: 100
-                    value: backend.source1Delay
-                    onMoved: backend.source1Delay = value
-                    Layout.fillWidth: true; Layout.preferredWidth: 4
+                            Rectangle {
+                                x: sw.checked ? parent.width - width - 3 : 3
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 16; height: 16; radius: 8
+                                color: Theme.switchHandle
+                                Behavior on x { NumberAnimation { duration: 120; easing.type: Easing.InOutQuad } }
+                            }
+                        }
 
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Delay between capture cycles for Source 2 (ms)"
-                    ToolTip.delay: 500
-                }
-                Label {
-                    text: backend.source1Delay + " ms"
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
-                }
-
-                // --- Source 3 ---
-                Label {
-                    text: "Source 3"; color: "#FF9800"; font.bold: true
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
-
-                    ToolTip.visible: s3LabelHover.hovered
-                    ToolTip.text: "Odometry sensor — produces noisy position readings for all robots"
-                    ToolTip.delay: 500
-                    HoverHandler { id: s3LabelHover }
-                }
-                CheckBox {
-                    checked: backend.source2Enabled
-                    onToggled: backend.source2Enabled = checked
-                    Layout.fillWidth: true; Layout.preferredWidth: 1
-                    Layout.alignment: Qt.AlignHCenter
-
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Enable or disable Source 3 (Odometry) thread"
-                    ToolTip.delay: 500
-                }
-                Slider {
-                    from: 100; to: 4000; stepSize: 100
-                    value: backend.source2Delay
-                    onMoved: backend.source2Delay = value
-                    Layout.fillWidth: true; Layout.preferredWidth: 4
-
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Delay between capture cycles for Source 3 (ms)"
-                    ToolTip.delay: 500
-                }
-                Label {
-                    text: backend.source2Delay + " ms"
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
+                        contentItem: Text {
+                            text: sw.text
+                            font: sw.font
+                            color: Theme.textPrimary
+                            leftPadding: sw.indicator.width + sw.spacing
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
                 }
 
-                // --- Processor ---
-                Label {
-                    text: "Processor"; font.bold: true
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
-
-                    ToolTip.visible: procLabelHover.hovered
-                    ToolTip.text: "Consumes buffer entries and computes averaged positions"
-                    ToolTip.delay: 500
-                    HoverHandler { id: procLabelHover }
+                // Helper to style modern sliders
+                Component {
+                    id: modernSlider
+                    Slider {
+                        id: control
+                        background: Rectangle {
+                            x: control.leftPadding; y: control.topPadding + control.availableHeight / 2 - height / 2
+                            implicitWidth: 150; implicitHeight: 6
+                            width: control.availableWidth; height: implicitHeight
+                            radius: 3; color: Theme.border
+                            Rectangle {
+                                width: control.visualPosition * parent.width; height: parent.height
+                                color: Theme.actionMain; radius: 3
+                            }
+                        }
+                        handle: Rectangle {
+                            x: control.leftPadding + control.visualPosition * (control.availableWidth - width)
+                            y: control.topPadding + control.availableHeight / 2 - height / 2
+                            implicitWidth: 16; implicitHeight: 16; radius: 8
+                            color: control.pressed ? Theme.actionHover : Theme.actionMain
+                        }
+                    }
                 }
-                CheckBox {
-                    checked: backend.processorEnabled
-                    onToggled: backend.processorEnabled = checked
-                    Layout.fillWidth: true; Layout.preferredWidth: 1
-                    Layout.alignment: Qt.AlignHCenter
 
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Enable or disable the Processor thread"
-                    ToolTip.delay: 500
-                }
-                Slider {
-                    from: 10; to: 1000; stepSize: 10
-                    value: backend.processorDelay
-                    onMoved: backend.processorDelay = value
-                    Layout.fillWidth: true; Layout.preferredWidth: 4
+                // Source 0 (IMU) Thread Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Theme.itemSpacing
 
-                    ToolTip.visible: hovered
-                    ToolTip.text: "Delay between processing cycles (ms)"
-                    ToolTip.delay: 500
+                    Loader {
+                        sourceComponent: themedSwitch
+                        Layout.preferredWidth: 130
+                        onLoaded: {
+                            item.text = "IMU";
+                            item.checked = Qt.binding(function(){ return backend.source0Enabled; });
+                            item.toggled.connect(function(){ backend.source0Enabled = item.checked; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Enable or disable Source 1 (IMU) thread"
+                        ToolTip.delay: 500
+                    }
+                    Loader {
+                        sourceComponent: modernSlider
+                        Layout.fillWidth: true
+                        onLoaded: {
+                            item.from = 10; item.to = 1000; item.stepSize = 10;
+                            item.value = Qt.binding(function(){ return backend.source0Delay; });
+                            item.moved.connect(function(){ backend.source0Delay = item.value; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Delay between IMU capture cycles (ms)"
+                        ToolTip.delay: 500
+                    }
+                    Label {
+                        text: backend.source0Delay + " ms"
+                        font.pixelSize: Theme.fontMeta; color: Theme.textSecondary
+                        Layout.preferredWidth: 55; horizontalAlignment: Text.AlignRight
+                    }
                 }
-                Label {
-                    text: backend.processorDelay + " ms"
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true; Layout.preferredWidth: 2
+
+                // Source 1 (GPS) Thread Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Theme.itemSpacing
+
+                    Loader {
+                        sourceComponent: themedSwitch
+                        Layout.preferredWidth: 130
+                        onLoaded: {
+                            item.text = "GPS";
+                            item.checked = Qt.binding(function(){ return backend.source1Enabled; });
+                            item.toggled.connect(function(){ backend.source1Enabled = item.checked; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Enable or disable Source 2 (GPS) thread"
+                        ToolTip.delay: 500
+                    }
+                    Loader {
+                        sourceComponent: modernSlider
+                        Layout.fillWidth: true
+                        onLoaded: {
+                            item.from = 10; item.to = 1000; item.stepSize = 10;
+                            item.value = Qt.binding(function(){ return backend.source1Delay; });
+                            item.moved.connect(function(){ backend.source1Delay = item.value; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Delay between GPS capture cycles (ms)"
+                        ToolTip.delay: 500
+                    }
+                    Label {
+                        text: backend.source1Delay + " ms"
+                        font.pixelSize: Theme.fontMeta; color: Theme.textSecondary
+                        Layout.preferredWidth: 55; horizontalAlignment: Text.AlignRight
+                    }
+                }
+
+                // Source 2 (Odometry) Thread Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Theme.itemSpacing
+
+                    Loader {
+                        sourceComponent: themedSwitch
+                        Layout.preferredWidth: 130
+                        onLoaded: {
+                            item.text = "Odometry";
+                            item.checked = Qt.binding(function(){ return backend.source2Enabled; });
+                            item.toggled.connect(function(){ backend.source2Enabled = item.checked; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Enable or disable Source 3 (Odometry) thread"
+                        ToolTip.delay: 500
+                    }
+                    Loader {
+                        sourceComponent: modernSlider
+                        Layout.fillWidth: true
+                        onLoaded: {
+                            item.from = 10; item.to = 1000; item.stepSize = 10;
+                            item.value = Qt.binding(function(){ return backend.source2Delay; });
+                            item.moved.connect(function(){ backend.source2Delay = item.value; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Delay between Odometry capture cycles (ms)"
+                        ToolTip.delay: 500
+                    }
+                    Label {
+                        text: backend.source2Delay + " ms"
+                        font.pixelSize: Theme.fontMeta; color: Theme.textSecondary
+                        Layout.preferredWidth: 55; horizontalAlignment: Text.AlignRight
+                    }
+                }
+
+                // Processor Thread Row
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: Theme.itemSpacing
+
+                    Loader {
+                        sourceComponent: themedSwitch
+                        Layout.preferredWidth: 130
+                        onLoaded: {
+                            item.text = "Processor";
+                            item.checked = Qt.binding(function(){ return backend.processorEnabled; });
+                            item.toggled.connect(function(){ backend.processorEnabled = item.checked; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Enable or disable the Processor thread"
+                        ToolTip.delay: 500
+                    }
+                    Loader {
+                        sourceComponent: modernSlider
+                        Layout.fillWidth: true
+                        onLoaded: {
+                            item.from = 10; item.to = 1000; item.stepSize = 10;
+                            item.value = Qt.binding(function(){ return backend.processorDelay; });
+                            item.moved.connect(function(){ backend.processorDelay = item.value; });
+                        }
+
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Delay between processing cycles (ms)"
+                        ToolTip.delay: 500
+                    }
+                    Label {
+                        text: backend.processorDelay + " ms"
+                        font.pixelSize: Theme.fontMeta; color: Theme.textSecondary
+                        Layout.preferredWidth: 55; horizontalAlignment: Text.AlignRight
+                    }
                 }
             }
         }

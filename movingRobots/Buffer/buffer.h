@@ -10,6 +10,20 @@
 /**
  * @file buffer.h
  * @brief Thread-safe bounded buffer for the producer-consumer pattern.
+ *
+ * This is the central synchronization point of the application. Source
+ * threads produce position readings into this buffer, and the Processor
+ * thread consumes them. The buffer decouples producers from the consumer,
+ * allowing them to run at different rates.
+ *
+ * Threading: all public methods are safe to call from any thread.
+ * Synchronization uses a two-layer scheme:
+ *   1. QSemaphores for blocking/waiting (capacity control).
+ *   2. std::mutex for mutual exclusion on the deque (data integrity).
+ *
+ * Deadlock avoidance: semaphore acquire always precedes mutex lock,
+ * and semaphore release always follows mutex unlock. Because the mutex
+ * is only held briefly (push/pop), the risk of starvation is minimal.
  */
 
 /**
@@ -24,13 +38,23 @@
  * Consumers call take() or tryTake() to retrieve them.
  *
  * The "try" variants accept a timeout, enabling threads to check for shutdown
- * signals periodically instead of blocking forever.
+ * signals periodically instead of blocking forever. This is essential for
+ * graceful shutdown: without timeouts, a thread blocked on acquire() would
+ * never observe the running flag becoming false.
+ *
+ * Why QSemaphore instead of std::condition_variable?
+ *   - QSemaphore provides a clean tryAcquire(count, timeout) API out of
+ *     the box, avoiding the spurious-wakeup boilerplate of condition_variable.
+ *   - It integrates naturally with Qt's event loop for timeout handling.
+ *   - The two-semaphore pattern maps directly to the bounded-buffer problem
+ *     taught in concurrency textbooks, making the code easier to follow.
  */
 class Buffer {
 public:
     /**
      * @brief Constructs a buffer with the given maximum capacity.
      * @param maxSize Maximum number of elements the buffer can hold.
+     *                Must be positive; throws std::invalid_argument otherwise.
      */
     explicit Buffer(int maxSize);
 
