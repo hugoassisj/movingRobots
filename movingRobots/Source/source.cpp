@@ -1,122 +1,56 @@
-#include <stdlib.h>
+/**
+ * @file source.cpp
+ * @brief Implementation of the Source position-sensing simulator.
+ */
 
 #include "source.h"
+#include "../constants.h"
 
-#define NEW_POS_RANGE 20
+Source::Source(int id)
+    : id_(id), rng_(std::random_device{}())
+{}
 
-using namespace std;
-
-/**
- * @brief Constructs a Source object with the given ID.
- *
- * @param _id The ID of the source.
- */
-Source::Source(int _id)
+int Source::getId() const
 {
-    mutexLock = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_lock(&mutexLock);
-    id = _id;
-    time = 0;
-    pthread_mutex_unlock(&mutexLock);
+    return id_;
 }
 
-/**
- * @brief Gets the ID of the source.
- *
- * @return int The ID of the source.
- */
-int Source::getId()
+void Source::saturate(Vector2D& position, int roomWidth, int roomHeight)
 {
-    int currentId;
-    pthread_mutex_lock(&mutexLock);
-    currentId = id;
-    pthread_mutex_unlock(&mutexLock);
-    return currentId;
+    // Clamp to valid grid range [0, dimension - GRID_STEP].
+    // Clamping (not wrapping) prevents source readings near borders from
+    // jumping to the opposite side, which would corrupt the average.
+    constexpr int G = Constants::GRID_STEP;
+
+    if (position.x < 0)              position.x = 0;
+    else if (position.x > roomWidth  - G) position.x = roomWidth  - G;
+
+    if (position.y < 0)              position.y = 0;
+    else if (position.y > roomHeight - G) position.y = roomHeight - G;
 }
 
-/**
- * @brief Sets the time associated with the source.
- *
- * @param newTime The time value to set.
- */
-void Source::SetTime(int newTime)
+Vector2D Source::produce(Robot& robot)
 {
-    time = newTime;
-}
+    // Pick one random cardinal direction (up / down / left / right)
+    // so the robot moves to exactly one adjacent cell per reading.
+    std::uniform_int_distribution<int> direction(0, 3);
 
-/**
- * @brief Gets the time associated with the source.
- *
- * @return int The time associated with the source.
- */
-int Source::GetTime()
-{
-    return time;
-}
+    Vector2D currentPosition = robot.getPosition();
 
-/**
- * @brief Adjusts the position if it goes beyond the screen boundaries.
- *
- * If the position goes beyond the screen boundaries, it adjusts it to the opposite side.
- *
- * @param pos The position vector to adjust.
- */
-void Source::Saturate(Vector2D &pos)
-{
-
-    if (pos.x > 390)
-    {
-        pthread_mutex_lock(&mutexLock);
-        pos.x = pos.x - 400;
-        pthread_mutex_unlock(&mutexLock);
-    }
-    else if (pos.x < -10)
-    {
-        pthread_mutex_lock(&mutexLock);
-        pos.x = 400 + pos.x;
-        pthread_mutex_unlock(&mutexLock);
+    Vector2D newPosition = currentPosition;
+    switch (direction(rng_)) {
+        case 0: newPosition.x += POSITION_DELTA; break;  // right
+        case 1: newPosition.x -= POSITION_DELTA; break;  // left
+        case 2: newPosition.y += POSITION_DELTA; break;  // down
+        case 3: newPosition.y -= POSITION_DELTA; break;  // up
     }
 
-    if (pos.y > 290)
-    {
-        pthread_mutex_lock(&mutexLock);
-        pos.y = pos.y - 300;
-        pthread_mutex_unlock(&mutexLock);
-    }
-    else if (pos.y < -10)
-    {
-        pthread_mutex_lock(&mutexLock);
-        pos.y = 300 + pos.y;
-        pthread_mutex_unlock(&mutexLock);
-    }
-}
+    // Ensure the new position stays within room bounds.
+    saturate(newPosition, ROOM_WIDTH, ROOM_HEIGHT);
 
-/**
- * @brief Produces a new position for a given robot.
- *
- * @param r The robot for which to produce the position.
- * @return Vector2D The newly produced position.
- */
-Vector2D Source::produce(Robot robot)
-{
-    Vector2D newPos;
+    // Tag the reading with source and robot identifiers.
+    newPosition.sourceId = id_;
+    newPosition.robotId  = robot.robotId();
 
-    // Generate a random number between 0 and 1 using rand()
-    bool usePositiveX = rand() % 2 == 0;
-    bool usePositiveY = rand() % 2 == 0;
-
-    pthread_mutex_lock(&mutexLock);
-
-    newPos.x = robot.getPosition().x + (usePositiveX ? NEW_POS_RANGE : -NEW_POS_RANGE);
-    newPos.y = robot.getPosition().y + (usePositiveY ? NEW_POS_RANGE : -NEW_POS_RANGE);
-
-    pthread_mutex_unlock(&mutexLock);
-
-    Saturate(newPos);
-
-    // Set IDs
-    newPos.sourceID = getId();
-    newPos.robotID = robot.getID();
-
-    return newPos;
+    return newPosition;
 }

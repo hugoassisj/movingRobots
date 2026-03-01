@@ -1,47 +1,62 @@
-[![HitCount](http://hits.dwyl.io/hugoassisj/movingRobots.svg)](http://hits.dwyl.io/hugoassisj/movingRobots)
+# Moving Robots
 
-# movingRobots
+[![Hits](https://hitcount.dev/p/hugoassisj/movingRobots.svg)](https://hitcount.dev/p/hugoassisj/movingRobots)
+![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?style=flat-square&logo=c%2B%2B&logoColor=white)
+![Qt 6](https://img.shields.io/badge/Qt-6-41CD52?style=flat-square&logo=qt&logoColor=white)
+![QML](https://img.shields.io/badge/QML-UI-41CD52?style=flat-square&logo=qt&logoColor=white)
+![Concurrency](https://img.shields.io/badge/Concurrency-Multithreaded-8A2BE2?style=flat-square)
+![Synchronization](https://img.shields.io/badge/Synchronization-Threading-FF8C00?style=flat-square)
 
-Threads concurrency and synchronization example, written in C++ using Qt.
+A **multithreaded concurrency and synchronization** demo written in **C++ / Qt 6 / QML**.
 
-# Instructions
+Three simulated position sources (IMU, GPS, Odometry) run on independent threads, each producing noisy readings for three robots moving inside a bounded grid. Readings are pushed into a **semaphore-based bounded buffer** (classic producer–consumer pattern), consumed by a **processor thread** that averages all three sources per robot, and then displayed in a fully responsive QML interface.
 
-Consider a system that receives the positions of three robots, which move in a room, from three different sources (for example: IMU, GPS and Odometry).
+## Architecture
 
-These sources spend a time between 100 ms and 4000 ms to capture the position of each robot, and then insert this information concurrently in a buffer of finite size N.
+![Architecture](architecture.png)
 
-After the system receives the position of a robot from all three sources, it must process the average position and insert the result into a data structure that stores the position of each robot separately. Finally, the system must present the positions of the robots in a graphical user interface.
+| Component             | Role                                                                                                                    |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Source**            | Generates random position deltas for each robot on a dedicated thread.                                                  |
+| **Buffer**            | Thread-safe bounded FIFO using `QSemaphore` + `std::mutex`.                                                             |
+| **Processor**         | Accumulates readings in a `[robots × sources]` matrix; computes the mean and snaps to the grid once all sources report. |
+| **Robot**             | `QObject` exposing position properties to QML with cross-thread signal safety.                                          |
+| **BackendController** | Owns all domain objects and threads; exposes properties and invokable actions to the QML UI.                            |
 
-![asd](https://user-images.githubusercontent.com/45035051/48899050-9a0caf00-ee35-11e8-8cc5-0deca1e4bf04.png)
+## Features
 
-The goal is to create a C ++ program using threads and semaphores that allow the capture, processing, and presentation of each robot's movement to occur concurrently and synchronously.
+![Application screenshot](ui.png)
 
-The initial position of the robots can be generated randomly. In order to generate their trajectory, consider that each new position consists of the previous position plus a random value in a given interval ( -P < Position < P), for each component (x and y).
+- **Real-time grid visualization** with smooth animations (4 : 3 aspect ratio, fully responsive).
+- **Per-thread controls**: enable/disable each source or the processor, adjust delays (100 – 4 000 ms).
+- **Keyboard control**: select a robot and move it with arrow keys (toroidal wrap-around).
+- **Buffer monitor**: live progress bar with color-coded fill percentage.
+- **Manual mode**: remove a single item from the buffer and observe the processor state in the console.
 
-# Required
+## Prerequisites
 
-	ubuntu
-	QtCreator
+| Tool         | Version                                       |
+| ------------ | --------------------------------------------- |
+| C++ compiler | C++17 support (GCC 9+, MSVC 2019+, Clang 10+) |
+| CMake        | 3.16+                                         |
+| Qt           | 6.5+ (Core, Quick, QuickControls2)            |
 
-##  Install QtCreator
-Open terminal and run:
+## Building
 
+```bash
+# Configure
+cmake -S movingRobots -B build -DCMAKE_PREFIX_PATH=<path-to-qt6>
+
+# Build
+cmake --build build
+
+# Run
+./build/movingRobots        # Linux / macOS
+build\movingRobots.exe      # Windows
 ```
-sudo apt-get install build-essential
 
-sudo apt-get install qtcreator
+> **Tip:** If you use Qt Creator, open `movingRobots/CMakeLists.txt` as the project file.
 
-sudo apt-get install qt5-default
-```
+## License
 
-## Open Project
-
-Open terminal and run:
-  
-```
-qtcreator 
-```
-  
-After that, select Open Project and then the _*.PRO_ file.
-  
-
+This project is provided for educational purposes.

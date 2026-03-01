@@ -1,75 +1,83 @@
-#include <stdlib.h>
-#include <time.h>
+/**
+ * @file robot.cpp
+ * @brief Implementation of the Robot class.
+ */
 
 #include "robot.h"
+#include "../constants.h"
 
-using namespace std;
+#include <random>
+#include <QMetaObject>
+#include <QThread>
+
+namespace {
+
+using namespace Constants;
 
 /**
- * @brief Constructor for the Robot class.
- *
- * Initializes a new instance of the Robot class with the given ID and a random position.
- *
- * @param id The ID of the robot.
+ * @brief Generates a random grid-aligned position within the room.
+ * @return A Vector2D with x in [0, ROOM_WIDTH) and y in [0, ROOM_HEIGHT),
+ *         both multiples of GRID_STEP.
  */
-Robot::Robot(int _id)
+Vector2D generateRandomPosition()
 {
-    mutexLock = PTHREAD_MUTEX_INITIALIZER;
+    static std::mt19937 rng(std::random_device{}());
+    std::uniform_int_distribution<int> xDist(0, ROOM_WIDTH  / GRID_STEP - 1);
+    std::uniform_int_distribution<int> yDist(0, ROOM_HEIGHT / GRID_STEP - 1);
+    return Vector2D(xDist(rng) * GRID_STEP, yDist(rng) * GRID_STEP);
+}
 
-    // Seed random number generator if not already seeded
-    static bool seeded = false;
-    if (!seeded)
+} // anonymous namespace
+
+Robot::Robot(int id, QObject* parent)
+    : QObject(parent)
+    , id_(id)
+    , position_(generateRandomPosition())
+{}
+
+int Robot::robotId() const
+{
+    return id_;  // Immutable after construction — no lock needed.
+}
+
+int Robot::posX() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return position_.x;
+}
+
+int Robot::posY() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return position_.y;
+}
+
+Vector2D Robot::getPosition() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return position_;
+}
+
+void Robot::setPosition(const Vector2D& newPosition)
+{
+    bool changed = false;
     {
-        srand(time(NULL));
-        seeded = true;
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (position_.x != newPosition.x || position_.y != newPosition.y) {
+            position_.x = newPosition.x;
+            position_.y = newPosition.y;
+            changed = true;
+        }
     }
 
-    // Initialize robot's ID and position
-    pthread_mutex_lock(&mutexLock);
-    id = _id;
-    pos.x = (rand() % 18) * 20; // Generate random x-coordinate within the range [0, 17] and scale it to the grid
-    pos.y = (rand() % 14) * 20; // Generate random y-coordinate within the range [0, 13] and scale it to the grid
-    pthread_mutex_unlock(&mutexLock);
-}
-
-/**
- * @brief Sets the position of the robot.
- *
- * @param newPos The new position of the robot.
- */
-void Robot::setPosition(Vector2D newPos)
-{
-    pthread_mutex_lock(&mutexLock);
-    pos.x = newPos.x;
-    pos.y = newPos.y;
-    pthread_mutex_unlock(&mutexLock);
-}
-
-/**
- * @brief Gets the current position of the robot.
- *
- * @return The current position of the robot.
- */
-Vector2D Robot::getPosition()
-{
-    Vector2D currentPos;
-    pthread_mutex_lock(&mutexLock);
-    currentPos.x = pos.x;
-    currentPos.y = pos.y;
-    pthread_mutex_unlock(&mutexLock);
-    return currentPos;
-}
-
-/**
- * @brief Gets the ID of the robot.
- *
- * @return The ID of the robot.
- */
-int Robot::getID()
-{
-    int currentId;
-    pthread_mutex_lock(&mutexLock);
-    currentId = id;
-    pthread_mutex_unlock(&mutexLock);
-    return currentId;
+    if (changed) {
+        // Ensure the signal is delivered on the GUI thread regardless of
+        // which thread called setPosition().
+        if (QThread::currentThread() == thread()) {
+            emit positionChanged();
+        } else {
+            QMetaObject::invokeMethod(this, "positionChanged",
+                                      Qt::QueuedConnection);
+        }
+    }
 }

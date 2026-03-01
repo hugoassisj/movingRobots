@@ -1,122 +1,93 @@
+/**
+ * @file buffer.cpp
+ * @brief Implementation of the semaphore-based bounded Buffer.
+ */
+
 #include "buffer.h"
-#include <iostream>
 
-using namespace std;
+#include <sstream>
 
-/**
- * @brief Constructs a Buffer object with the given maximum size.
- *
- * @param max The maximum size of the buffer.
- */
-Buffer::Buffer(int _maxSize)
+Buffer::Buffer(int maxSize)
+    : freeSlots_(maxSize), usedSlots_(0), maxSize_(maxSize)
+{}
+
+// -- Blocking insert (waits indefinitely for a free slot) --
+
+void Buffer::put(const Vector2D& position)
 {
-    maxSize = _maxSize;
-    mutexLock = PTHREAD_MUTEX_INITIALIZER;
-}
-
-/**
- * @brief Displays the contents of the buffer.
- */
-void Buffer::display()
-{
-    int size;
-    pthread_mutex_lock(&mutexLock);
-    size = buffer.size();
-    pthread_mutex_unlock(&mutexLock);
-
-    if (size > 0)
+    freeSlots_.acquire();                           // Wait for a free slot.
     {
-        cout << endl;
-        cout << "Size: " << size << endl;
-        cout << "--------------------------------------------------" << endl;
-
-        for (int i = 0; i < size; ++i)
-        {
-            pthread_mutex_lock(&mutexLock);
-            Vector2D &pos = buffer[i];
-            cout << i + 1 << ".\tX: " << pos.x << "\tY: " << pos.y
-                 << "\t|SourceID: " << pos.sourceID << "\t|RobotID: " << pos.robotID << endl;
-            pthread_mutex_unlock(&mutexLock);
-        }
+        std::lock_guard<std::mutex> lock(mutex_);
+        data_.push_back(position);
     }
+    usedSlots_.release();                           // Signal a new item.
 }
 
-/**
- * @brief Initializes the buffer with default values.
- */
-void Buffer::init()
+// -- Timed insert (returns false if no slot within timeout) --
+
+bool Buffer::tryPut(const Vector2D& position, int timeoutMs)
 {
-    pthread_mutex_lock(&mutexLock);
-    buffer.resize(maxSize, {-2, -2, -2, -2});
-    pthread_mutex_unlock(&mutexLock);
+    if (!freeSlots_.tryAcquire(1, timeoutMs)) {
+        return false;
+    }
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        data_.push_back(position);
+    }
+    usedSlots_.release();
+    return true;
 }
 
-/**
- * @brief Puts a position vector into the buffer.
- *
- * @param pos The position vector to be put into the buffer.
- */
-void Buffer::putPositions(Vector2D pos)
-{
-    pthread_mutex_lock(&mutexLock);
-    if (buffer.size() < maxSize)
-        buffer.push_back(pos);
-    pthread_mutex_unlock(&mutexLock);
-}
+// -- Blocking remove (waits indefinitely for an item) --
 
-/**
- * @brief Retrieves a position vector from the buffer.
- *
- * @return Vector2D The retrieved position vector.
- */
-Vector2D Buffer::getPositions()
+Vector2D Buffer::take()
 {
+    usedSlots_.acquire();                           // Wait for an item.
     Vector2D element;
-    pthread_mutex_lock(&mutexLock);
-    if (!buffer.empty())
     {
-        element = buffer.front();
-        buffer.pop_front();
+        std::lock_guard<std::mutex> lock(mutex_);
+        element = data_.front();
+        data_.pop_front();
     }
-    pthread_mutex_unlock(&mutexLock);
+    freeSlots_.release();                           // Signal a free slot.
     return element;
 }
 
-/**
- * @brief Retrieves the first position vector from the buffer without removing it.
- *
- * @return Vector2D The first position vector in the buffer.
- */
-Vector2D Buffer::consult()
+// -- Timed remove (returns false if no item within timeout) --
+
+bool Buffer::tryTake(Vector2D& result, int timeoutMs)
 {
-    Vector2D element;
-    pthread_mutex_lock(&mutexLock);
-    if (!buffer.empty())
-        element = buffer.front();
-    pthread_mutex_unlock(&mutexLock);
-    return element;
+    if (!usedSlots_.tryAcquire(1, timeoutMs)) {
+        return false;
+    }
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        result = data_.front();
+        data_.pop_front();
+    }
+    freeSlots_.release();
+    return true;
 }
 
-/**
- * @brief Gets the current size of the buffer.
- *
- * @return int The current size of the buffer.
- */
-int Buffer::getSize()
+int Buffer::getSize() const
 {
-    int size;
-    pthread_mutex_lock(&mutexLock);
-    size = buffer.size();
-    pthread_mutex_unlock(&mutexLock);
-    return size;
+    std::lock_guard<std::mutex> lock(mutex_);
+    return static_cast<int>(data_.size());
 }
 
-/**
- * @brief Gets the maximum size of the buffer.
- *
- * @return int The maximum size of the buffer.
- */
-int Buffer::getMaxSize()
+int Buffer::getMaxSize() const
 {
-    return maxSize;
+    return maxSize_;
+}
+
+std::string Buffer::toString() const
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::ostringstream oss;
+    oss << "Buffer [" << data_.size() << "/" << maxSize_ << "]:\n";
+    int index = 1;
+    for (const auto& position : data_) {
+        oss << "  " << index++ << ". " << position.toString() << "\n";
+    }
+    return oss.str();
 }
