@@ -31,12 +31,6 @@ public:
     explicit Source(int id);
 
     /**
-     * @brief Returns this source's unique identifier.
-     * @return Source ID.
-     */
-    int getId() const;
-
-    /**
      * @brief Produces a new position reading for the given robot.
      *
      * Reads the robot's current position, applies a random +/– delta to

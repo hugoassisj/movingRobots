@@ -10,11 +10,6 @@ Source::Source(int id)
     : id_(id), rng_(std::random_device{}())
 {}
 
-int Source::getId() const
-{
-    return id_;
-}
-
 void Source::saturate(Vector2D& position, int roomWidth, int roomHeight)
 {
     // Clamp to valid grid range [0, dimension - GRID_STEP].

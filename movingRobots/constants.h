@@ -20,12 +20,6 @@ constexpr int ROOM_HEIGHT = 300;
 /// Grid cell size in logical pixels. All robot positions must be multiples of this.
 constexpr int GRID_STEP   = 20;
 
-/// Number of grid columns (0-based index range: 0 .. GRID_COLS-1).
-constexpr int GRID_COLS   = ROOM_WIDTH  / GRID_STEP;   // 20
-
-/// Number of grid rows (0-based index range: 0 .. GRID_ROWS-1).
-constexpr int GRID_ROWS   = ROOM_HEIGHT / GRID_STEP;   // 15
-
 /// Number of robots tracked by the system.
 constexpr int NUM_ROBOTS  = 3;
 
